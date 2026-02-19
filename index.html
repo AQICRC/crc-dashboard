@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Air Quality Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Prompt', sans-serif;
+    color:white;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    transition:all 0.4s ease;
+}
+
+.container{
+    padding:25px;
+    max-width:600px;
+    margin:auto;
+}
+
+.card{
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.3);
+}
+
+.big{
+    font-size:55px;
+    font-weight:700;
+}
+
+.medium{
+    font-size:22px;
+}
+
+.lang{
+    text-align:right;
+    margin-bottom:15px;
+}
+
+button{
+    padding:6px 12px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    font-weight:500;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="lang">
+<button onclick="switchLang('th')">ไทย</button>
+<button onclick="switchLang('en')">English</button>
+</div>
+
+<div class="card">
+<div id="tempTitle">อุณหภูมิ</div>
+<div class="big" id="temp">-- °C</div>
+<div id="humidityTitle">ความชื้น</div>
+<div class="medium" id="humidity">-- %</div>
+</div>
+
+<div class="card" id="aqiCard">
+<div id="aqiTitle">ดัชนีคุณภาพอากาศ</div>
+<div class="big" id="aqiValue">--</div>
+<div id="aqiStatus"></div>
+<div id="pmValue"></div>
+</div>
+
+</div>
+
+<script>
+
+const channelID = "2456050";
+let currentLang = "th";
+
+const text = {
+th:{
+temp:"อุณหภูมิ",
+humidity:"ความชื้น",
+aqi:"ดัชนีคุณภาพอากาศ",
+good:"ดี",
+moderate:"ปานกลาง",
+unhealthy:"เริ่มมีผลกระทบ",
+danger:"อันตราย"
+},
+en:{
+temp:"Temperature",
+humidity:"Humidity",
+aqi:"Air Quality Index",
+good:"Good",
+moderate:"Moderate",
+unhealthy:"Unhealthy",
+danger:"Hazardous"
+}
+};
+
+function switchLang(lang){
+currentLang = lang;
+applyLang();
+}
+
+function applyLang(){
+document.getElementById("tempTitle").innerText = text[currentLang].temp;
+document.getElementById("humidityTitle").innerText = text[currentLang].humidity;
+document.getElementById("aqiTitle").innerText = text[currentLang].aqi;
+}
+
+applyLang();
+
+// ===== ดึงข้อมูลจาก ThingSpeak =====
+fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json`)
+.then(res=>res.json())
+.then(data=>{
+
+let temp = parseFloat(data.field1);
+let humidity = parseFloat(data.field2);
+let pm25 = parseFloat(data.field3);
+
+document.getElementById("temp").innerText = temp + " °C";
+document.getElementById("humidity").innerText = humidity + " %";
+document.getElementById("pmValue").innerText = "PM2.5 : " + pm25 + " µg/m³";
+
+let aqi = calculateAQI(pm25);
+document.getElementById("aqiValue").innerText = aqi;
+
+let statusKey="";
+let color="";
+
+if(aqi<=50){statusKey="good";color="#2ecc71";}
+else if(aqi<=100){statusKey="moderate";color="#f1c40f";}
+else if(aqi<=150){statusKey="unhealthy";color="#e67e22";}
+else{statusKey="danger";color="#e74c3c";}
+
+document.getElementById("aqiStatus").innerText = text[currentLang][statusKey];
+document.getElementById("aqiCard").style.background=color;
+
+});
+
+// ===== คำนวณ AQI =====
+function calculateAQI(pm){
+if(pm<=12) return scale(pm,0,12,0,50);
+if(pm<=35.4) return scale(pm,12.1,35.4,51,100);
+if(pm<=55.4) return scale(pm,35.5,55.4,101,150);
+if(pm<=150.4) return scale(pm,55.5,150.4,151,200);
+return 300;
+}
+
+function scale(x,in_min,in_max,out_min,out_max){
+return Math.round((x-in_min)*(out_max-out_min)/(in_max-in_min)+out_min);
+}
+
+</script>
+
+</body>
+</html>
