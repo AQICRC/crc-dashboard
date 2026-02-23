@@ -135,7 +135,70 @@ right:10px;
 transform:scale(0.85);
 }
 }
+/* ===== WEATHER EFFECT ===== */
 
+/* SUN */
+.sun{
+position:absolute;
+top:80px;
+right:120px;
+width:140px;
+height:140px;
+background:radial-gradient(circle,#fff200,#ff9800);
+border-radius:50%;
+box-shadow:0 0 120px rgba(255,200,0,0.8);
+animation:spin 25s linear infinite;
+}
+
+@keyframes spin{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+/* CLOUD */
+.cloud{
+position:absolute;
+left:-300px;
+font-size:160px;
+opacity:0.85;
+animation:cloudMove linear infinite;
+}
+
+@keyframes cloudMove{
+from{left:-300px;}
+to{left:120%;}
+}
+
+/* RAIN */
+.rain-drop{
+position:absolute;
+width:2px;
+height:25px;
+background:white;
+opacity:0.6;
+transform:rotate(20deg);
+animation:rainFall linear infinite;
+}
+
+@keyframes rainFall{
+to{transform:translateY(100vh) rotate(20deg);}
+}
+
+/* LIGHTNING */
+.lightning{
+position:absolute;
+width:100%;
+height:100%;
+background:white;
+opacity:0;
+animation:flash 4s infinite;
+}
+
+@keyframes flash{
+0%,94%,100%{opacity:0;}
+95%{opacity:0.7;}
+96%{opacity:0;}
+}
 </style>
 </head>
 <body>
@@ -244,7 +307,7 @@ setInterval(()=>{
 currentLang=currentLang==="th"?"en":"th";
 applyLanguage();
 loadData();
-},15000);
+},30000);
 
 /* DATE TIME */
 function updateDateTime(){
@@ -268,23 +331,52 @@ return 300;
 function scale(x,a,b,c,d){return Math.round((x-a)*(d-c)/(b-a)+c);}
 
 /* WEATHER EFFECT */
-function clearWeather(){weatherBG.innerHTML="";}
-function createSun(){weatherBG.innerHTML='<div class="sun"></div>';}
-function createCloud(){weatherBG.innerHTML='<div class="cloud">☁️</div>';}
+/* WEATHER EFFECT FIXED */
+
+function clearWeather(){
+let bg = document.getElementById("weatherBG");
+bg.innerHTML="";
+}
+
+function createSun(){
+let bg = document.getElementById("weatherBG");
+let s = document.createElement("div");
+s.className="sun";
+bg.appendChild(s);
+}
+
+function createCloud(count=3){
+let bg = document.getElementById("weatherBG");
+
+for(let i=0;i<count;i++){
+    let c=document.createElement("div");
+    c.className="cloud";
+    c.innerHTML="☁️";
+    c.style.top=(50+Math.random()*250)+"px";
+    c.style.animationDuration=(30+Math.random()*40)+"s";
+    bg.appendChild(c);
+}
+}
+
 function createRain(){
+let bg = document.getElementById("weatherBG");
+
 for(let i=0;i<120;i++){
-let r=document.createElement("div");
-r.className="rain-drop";
-r.style.left=Math.random()*100+"vw";
-r.style.animationDuration=(0.5+Math.random())+"s";
-weatherBG.appendChild(r);
+    let r=document.createElement("div");
+    r.className="rain-drop";
+    r.style.left=Math.random()*100+"vw";
+    r.style.animationDuration=(0.5+Math.random())+"s";
+    bg.appendChild(r);
 }
 }
+
 function createLightning(){
+let bg = document.getElementById("weatherBG");
 let l=document.createElement("div");
 l.className="lightning";
-weatherBG.appendChild(l);
+bg.appendChild(l);
 }
+
 
 /* LOAD DATA */
 function loadData(){
@@ -318,7 +410,7 @@ document.getElementById("aqiStatus").innerText=text[currentLang][status];
 fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherKey}&units=metric&lang=${currentLang}`)
 .then(res=>res.json())
 .then(w=>{
-clearWeather();
+
 
 document.getElementById("weatherMain").innerText=w.weather[0].description;
 document.getElementById("wind").innerText=text[currentLang].wind+" : "+w.wind.speed+" m/s";
@@ -332,11 +424,26 @@ text[currentLang].sunrise+" : "+sunrise.toLocaleTimeString()+
 " | "+
 text[currentLang].sunset+" : "+sunset.toLocaleTimeString();
 
-let main=w.weather[0].main;
-if(main==="Clear")createSun();
-else if(main==="Clouds")createCloud();
-else if(main==="Rain")createRain();
-else if(main==="Thunderstorm"){createRain();createLightning();}
+clearWeather();   // ต้องอยู่ตรงนี้ ก่อนสร้าง effect
+
+let main = w.weather[0].main;
+
+if(main === "Clear"){
+    createSun();
+    createCloud(2);
+}
+else if(main === "Clouds"){
+    createCloud(4);
+}
+else if(main === "Rain"){
+    createCloud(4);
+    createRain();
+}
+else if(main === "Thunderstorm"){
+    createCloud(5);
+    createRain();
+    createLightning();
+}
 });
 }
 
