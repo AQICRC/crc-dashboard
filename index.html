@@ -3,163 +3,348 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Air Quality Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;500;700&display=swap" rel="stylesheet">
+<title>สถานีตรวจวัดสภาพอากาศ</title>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
+/* ===== BACKGROUND ===== */
 body{
-    margin:0;
-    font-family:'Prompt', sans-serif;
-    color:white;
-    background:linear-gradient(135deg,#1e3c72,#2a5298);
-    transition:all 0.4s ease;
+margin:0;
+font-family:'Anuphan', sans-serif;
+color:white;
+overflow:hidden;
+background:url('DJI_00161.jpg') no-repeat center center fixed;
+background-size:cover;
+}
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.35);
+z-index:0;
+}
+
+.weather-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:1;
+pointer-events:none;
+overflow:hidden;
 }
 
 .container{
-    padding:25px;
-    max-width:600px;
-    margin:auto;
+max-width:1500px;
+margin:auto;
+padding:40px;
+position:relative;
+z-index:2;
+}
+
+/* HEADER */
+.header{
+display:flex;
+align-items:center;
+gap:25px;
+margin-bottom:30px;
+}
+
+.logo{
+width:200px;
+filter:drop-shadow(0 0 10px rgba(255,255,255,0.6));
+}
+
+.station-name{
+font-size:36px;
+font-weight:700;
+text-shadow:0 0 15px rgba(0,0,0,0.6);
+}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:30px;
 }
 
 .card{
-    background:rgba(255,255,255,0.12);
-    backdrop-filter:blur(10px);
-    border-radius:20px;
-    padding:25px;
-    margin-bottom:20px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.3);
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(15px);
+border-radius:25px;
+padding:40px;
+min-height:320px;
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+transition:0.4s;
 }
 
-.big{
-    font-size:55px;
-    font-weight:700;
+.card h2{margin:0;font-size:26px;}
+.big{font-size:80px;font-weight:700;}
+.time-big{font-size:95px;font-weight:700;}
+.medium{font-size:36px;}
+.small{font-size:22px;}
+
+/* AQI COLORS */
+.aqi-good{background:linear-gradient(135deg,#11998e,#38ef7d);}
+.aqi-moderate{background:linear-gradient(135deg,#f7971e,#ffd200);}
+.aqi-unhealthy{background:linear-gradient(135deg,#f46b45,#eea849);}
+.aqi-danger{background:linear-gradient(135deg,#c31432,#240b36);}
+
+/* ===== CREDIT ===== */
+.credit{
+position:fixed;
+bottom:20px;
+right:30px;
+display:flex;
+align-items:center;
+gap:15px;
+z-index:3;
+background:rgba(0,0,0,0.45);
+padding:12px 22px;
+border-radius:60px;
+backdrop-filter:blur(10px);
+box-shadow:0 8px 25px rgba(0,0,0,0.5);
 }
 
-.medium{
-    font-size:22px;
+.credit img{
+height:60px;
+filter:drop-shadow(0 0 8px rgba(255,255,255,0.7));
 }
 
-.lang{
-    text-align:right;
-    margin-bottom:15px;
+.credit-text{
+font-size:20px;
+font-weight:700;
+white-space:nowrap;
 }
 
-button{
-    padding:6px 12px;
-    border:none;
-    border-radius:20px;
-    cursor:pointer;
-    font-weight:500;
+/* MOBILE */
+@media(max-width:1000px){
+.grid{grid-template-columns:1fr;}
+.credit{
+bottom:10px;
+right:10px;
+transform:scale(0.85);
 }
+}
+
 </style>
 </head>
 <body>
 
+<div class="weather-bg" id="weatherBG"></div>
+
 <div class="container">
 
-<div class="lang">
-<button onclick="switchLang('th')">ไทย</button>
-<button onclick="switchLang('en')">English</button>
+<div class="header">
+<img src="crclogo.png" class="logo">
+<div class="station-name" id="stationTitle"></div>
+</div>
+
+<div class="grid">
+
+<div class="card" id="aqiCard">
+<h2 id="titleAQI"></h2>
+<div class="big" id="aqiValue">--</div>
+<div class="medium" id="aqiStatus"></div>
+<div class="small" id="pmValue"></div>
 </div>
 
 <div class="card">
-<div id="tempTitle">อุณหภูมิ</div>
+<h2 id="titleTime"></h2>
+<div class="small" id="dateDisplay"></div>
+<div class="time-big" id="timeDisplay"></div>
+</div>
+
+<div class="card">
+<h2 id="titleTemp"></h2>
 <div class="big" id="temp">-- °C</div>
-<div id="humidityTitle">ความชื้น</div>
 <div class="medium" id="humidity">-- %</div>
 </div>
 
-<div class="card" id="aqiCard">
-<div id="aqiTitle">ดัชนีคุณภาพอากาศ</div>
-<div class="big" id="aqiValue">--</div>
-<div id="aqiStatus"></div>
-<div id="pmValue"></div>
+<div class="card">
+<h2 id="titleWeather"></h2>
+<div class="big" id="weatherMain">--</div>
+<div class="small" id="wind"></div>
+<div class="small" id="visibility"></div>
+<div class="small" id="sunTime"></div>
 </div>
 
+</div>
+</div>
+
+<!-- CREDIT มุมขวาล่าง -->
+<div class="credit">
+<img src="CRC_Faculty-of-Engineering_Logo.png" alt="Engineering Logo">
+<div class="credit-text">คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย</div>
 </div>
 
 <script>
 
-const channelID = "2456050";
-let currentLang = "th";
+/* CONFIG */
+const channelID="2456050";
+const weatherKey="aa04f05208f963755ac32e53fff87d12";
+const lat=19.864625;
+const lon=99.785341;
 
-const text = {
+let currentLang="th";
+
+/* LANGUAGE */
+const text={
 th:{
-temp:"อุณหภูมิ",
-humidity:"ความชื้น",
-aqi:"ดัชนีคุณภาพอากาศ",
-good:"ดี",
-moderate:"ปานกลาง",
-unhealthy:"เริ่มมีผลกระทบ",
-danger:"อันตราย"
+station:"สถานีตรวจวัดสภาพอากาศ วิทยาลัยเชียงราย : สถานีที่ 1 อาคารเฉลิมพระเกียรติ",
+aqi:"ดัชนีคุณภาพอากาศ (AQI)",
+time:"วันที่ & เวลา",
+temp:"อุณหภูมิ & ความชื้น",
+weather:"สภาพอากาศ",
+good:"ดี 😊",
+moderate:"ปานกลาง 😐",
+unhealthy:"เริ่มมีผล 😷",
+danger:"อันตราย ☠️",
+wind:"ลม",
+visibility:"ทัศนวิสัย",
+sunrise:"ดวงอาทิตย์ขึ้น",
+sunset:"ตก"
 },
 en:{
-temp:"Temperature",
-humidity:"Humidity",
-aqi:"Air Quality Index",
-good:"Good",
-moderate:"Moderate",
-unhealthy:"Unhealthy",
-danger:"Hazardous"
+station:"Weather Station Chiangrai College : St. 1 Chalermphrakiat Bldg.",
+aqi:"Air Quality Index (AQI)",
+time:"Date & Time",
+temp:"Temperature & Humidity",
+weather:"Weather",
+good:"Good 😊",
+moderate:"Moderate 😐",
+unhealthy:"Unhealthy 😷",
+danger:"Hazardous ☠️",
+wind:"Wind",
+visibility:"Visibility",
+sunrise:"Sunrise",
+sunset:"Sunset"
 }
 };
 
-function switchLang(lang){
-currentLang = lang;
-applyLang();
+function applyLanguage(){
+document.getElementById("stationTitle").innerText = text[currentLang].station;
+document.getElementById("titleAQI").innerText=text[currentLang].aqi;
+document.getElementById("titleTime").innerText=text[currentLang].time;
+document.getElementById("titleTemp").innerText=text[currentLang].temp;
+document.getElementById("titleWeather").innerText=text[currentLang].weather;
 }
 
-function applyLang(){
-document.getElementById("tempTitle").innerText = text[currentLang].temp;
-document.getElementById("humidityTitle").innerText = text[currentLang].humidity;
-document.getElementById("aqiTitle").innerText = text[currentLang].aqi;
+/* AUTO SWITCH LANGUAGE */
+setInterval(()=>{
+currentLang=currentLang==="th"?"en":"th";
+applyLanguage();
+loadData();
+},15000);
+
+/* DATE TIME */
+function updateDateTime(){
+let now=new Date();
+let locale=currentLang==="th"?"th-TH":"en-US";
+document.getElementById("dateDisplay").innerText=
+now.toLocaleDateString(locale,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById("timeDisplay").innerText=
+now.toLocaleTimeString(locale);
+}
+setInterval(updateDateTime,1000);
+
+/* AQI */
+function calculateAQI(pm){
+if(pm<=12)return scale(pm,0,12,0,50);
+if(pm<=35.4)return scale(pm,12.1,35.4,51,100);
+if(pm<=55.4)return scale(pm,35.5,55.4,101,150);
+if(pm<=150.4)return scale(pm,55.5,150.4,151,200);
+return 300;
+}
+function scale(x,a,b,c,d){return Math.round((x-a)*(d-c)/(b-a)+c);}
+
+/* WEATHER EFFECT */
+function clearWeather(){weatherBG.innerHTML="";}
+function createSun(){weatherBG.innerHTML='<div class="sun"></div>';}
+function createCloud(){weatherBG.innerHTML='<div class="cloud">☁️</div>';}
+function createRain(){
+for(let i=0;i<120;i++){
+let r=document.createElement("div");
+r.className="rain-drop";
+r.style.left=Math.random()*100+"vw";
+r.style.animationDuration=(0.5+Math.random())+"s";
+weatherBG.appendChild(r);
+}
+}
+function createLightning(){
+let l=document.createElement("div");
+l.className="lightning";
+weatherBG.appendChild(l);
 }
 
-applyLang();
+/* LOAD DATA */
+function loadData(){
 
-// ===== ดึงข้อมูลจาก ThingSpeak =====
 fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json`)
 .then(res=>res.json())
 .then(data=>{
+let temp=parseFloat(data.field1);
+let humidity=parseFloat(data.field2);
+let pm=parseFloat(data.field3);
 
-let temp = parseFloat(data.field1);
-let humidity = parseFloat(data.field2);
-let pm25 = parseFloat(data.field3);
+document.getElementById("temp").innerText=temp+" °C";
+document.getElementById("humidity").innerText=humidity+" %";
+document.getElementById("pmValue").innerText="PM2.5 : "+pm+" µg/m³";
 
-document.getElementById("temp").innerText = temp + " °C";
-document.getElementById("humidity").innerText = humidity + " %";
-document.getElementById("pmValue").innerText = "PM2.5 : " + pm25 + " µg/m³";
+let aqi=calculateAQI(pm);
+document.getElementById("aqiValue").innerText=aqi;
 
-let aqi = calculateAQI(pm25);
-document.getElementById("aqiValue").innerText = aqi;
+let card=document.getElementById("aqiCard");
+card.classList.remove("aqi-good","aqi-moderate","aqi-unhealthy","aqi-danger");
 
-let statusKey="";
-let color="";
+let status="";
+if(aqi<=50){status="good";card.classList.add("aqi-good");}
+else if(aqi<=100){status="moderate";card.classList.add("aqi-moderate");}
+else if(aqi<=150){status="unhealthy";card.classList.add("aqi-unhealthy");}
+else{status="danger";card.classList.add("aqi-danger");}
 
-if(aqi<=50){statusKey="good";color="#2ecc71";}
-else if(aqi<=100){statusKey="moderate";color="#f1c40f";}
-else if(aqi<=150){statusKey="unhealthy";color="#e67e22";}
-else{statusKey="danger";color="#e74c3c";}
-
-document.getElementById("aqiStatus").innerText = text[currentLang][statusKey];
-document.getElementById("aqiCard").style.background=color;
-
+document.getElementById("aqiStatus").innerText=text[currentLang][status];
 });
 
-// ===== คำนวณ AQI =====
-function calculateAQI(pm){
-if(pm<=12) return scale(pm,0,12,0,50);
-if(pm<=35.4) return scale(pm,12.1,35.4,51,100);
-if(pm<=55.4) return scale(pm,35.5,55.4,101,150);
-if(pm<=150.4) return scale(pm,55.5,150.4,151,200);
-return 300;
+fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherKey}&units=metric&lang=${currentLang}`)
+.then(res=>res.json())
+.then(w=>{
+clearWeather();
+
+document.getElementById("weatherMain").innerText=w.weather[0].description;
+document.getElementById("wind").innerText=text[currentLang].wind+" : "+w.wind.speed+" m/s";
+document.getElementById("visibility").innerText=text[currentLang].visibility+" : "+(w.visibility/1000)+" km";
+
+let sunrise=new Date(w.sys.sunrise*1000);
+let sunset=new Date(w.sys.sunset*1000);
+
+document.getElementById("sunTime").innerText=
+text[currentLang].sunrise+" : "+sunrise.toLocaleTimeString()+
+" | "+
+text[currentLang].sunset+" : "+sunset.toLocaleTimeString();
+
+let main=w.weather[0].main;
+if(main==="Clear")createSun();
+else if(main==="Clouds")createCloud();
+else if(main==="Rain")createRain();
+else if(main==="Thunderstorm"){createRain();createLightning();}
+});
 }
 
-function scale(x,in_min,in_max,out_min,out_max){
-return Math.round((x-in_min)*(out_max-out_min)/(in_max-in_min)+out_min);
-}
+applyLanguage();
+updateDateTime();
+loadData();
+setInterval(loadData,60000);
 
 </script>
-
 </body>
 </html>
