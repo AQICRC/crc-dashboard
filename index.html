@@ -52,19 +52,32 @@ z-index:2;
 .header{
 display:flex;
 align-items:center;
-gap:25px;
+justify-content:center;   /* ทำให้ทั้งหมดอยู่กลาง */
+gap:20px;
 margin-bottom:30px;
+text-align:center;
 }
 
 .logo{
-width:200px;
+width:260px;
 filter:drop-shadow(0 0 10px rgba(255,255,255,0.6));
 }
 
 .station-name{
-font-size:36px;
-font-weight:700;
-text-shadow:0 0 15px rgba(0,0,0,0.6);
+font-size:42px;
+font-weight:800;
+color:white;
+
+background:rgba(0,0,0,0.45);
+padding:12px 28px;
+border-radius:40px;
+
+text-shadow:0 4px 15px rgba(0,0,0,0.7);
+letter-spacing:1px;
+
+white-space:nowrap;
+
+margin:0 auto;   /* ช่วยจัดกลาง */
 }
 
 /* GRID */
@@ -76,7 +89,7 @@ gap:30px;
 
 .card{
 background:rgba(255,255,255,0.12);
-backdrop-filter:blur(15px);
+backdrop-filter:blur(10px);
 border-radius:25px;
 padding:40px;
 min-height:320px;
@@ -87,12 +100,104 @@ justify-content:space-between;
 transition:0.4s;
 }
 
-.card h2{margin:0;font-size:26px;}
-.big{font-size:80px;font-weight:700;}
-.time-big{font-size:95px;font-weight:700;}
-.medium{font-size:36px;}
-.small{font-size:22px;}
+.card h2{margin:0;font-size:35px;}
+.big{font-size:100px;font-weight:700;}
+.time-big{font-size:120px;font-weight:700;}
+.medium{font-size:40px;}
+.small{font-size:32px;}
+.card-wide{
+grid-column:span 2;
+}
 
+.card-split{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:40px;
+}
+#titleAQI{
+font-size:60px;
+}
+.aqi-section{
+flex:1;
+}
+#weatherMain{
+font-size:60px;
+font-weight:800;
+}
+#dateDisplay{
+font-size:45px;
+font-weight:600;
+}
+/* AQI TITLE */
+#titleAQI{
+color:#cfaef3;
+font-weight:800;
+text-shadow:0 3px 10px rgba(0,0,0,0.3);
+}
+
+/* TEMPERATURE TITLE */
+#titleTemp{
+color:#cfaef3;
+font-weight:700;
+}
+
+/* WEATHER TITLE */
+#titleWeather{
+color:#c1e90d;
+font-weight:700;
+}
+/* SCROLLING TEXT */
+
+
+.news-ticker{
+width:100%;
+overflow:hidden;
+white-space:nowrap;
+margin-top:10px;
+background:rgba(0,0,0,0.35);
+border-radius:20px;
+padding:10px 0;
+}
+
+.ticker-text{
+display:inline-block;
+white-space:nowrap;
+animation:scrollText 100s linear infinite;
+font-size:28px;
+font-weight:600;
+color:white;
+}
+.aqi-emoji{
+font-size:65px;
+margin-left:10px;
+animation:emojiPulse 2s infinite;
+filter:drop-shadow(0 0 10px rgba(255,255,255,0.7));
+}
+
+@keyframes emojiPulse{
+
+0%{transform:scale(1);}
+50%{transform:scale(1.25);}
+100%{transform:scale(1);}
+
+}
+/* LEFT → RIGHT */
+
+@keyframes scrollText{
+0%{
+transform:translateX(100%);
+}
+100%{
+transform:translateX(-100%);
+}
+}
+.time-section{
+flex:1;
+text-align:right;
+border-left:2px solid rgba(255,255,255,0.25);
+padding-left:40px;
+}
 /* AQI COLORS */
 .aqi-good{background:linear-gradient(135deg,#11998e,#38ef7d);}
 .aqi-moderate{background:linear-gradient(135deg,#f7971e,#ffd200);}
@@ -199,6 +304,121 @@ animation:flash 4s infinite;
 95%{opacity:0.7;}
 96%{opacity:0;}
 }
+/* ===== MOBILE RESPONSIVE ===== */
+
+@media (max-width:900px){
+
+body{
+overflow:auto;
+}
+
+/* container */
+.container{
+padding:20px;
+}
+
+/* HEADER */
+.header{
+flex-direction:column;
+gap:10px;
+}
+
+.logo{
+width:150px;
+}
+
+.station-name{
+font-size:22px;
+padding:8px 16px;
+white-space:normal;
+text-align:center;
+}
+
+/* GRID */
+.grid{
+grid-template-columns:1fr;
+gap:20px;
+}
+
+/* CARD */
+.card{
+padding:25px;
+min-height:auto;
+}
+
+.card-wide{
+grid-column:span 1;
+}
+
+/* AQI layout */
+.card-split{
+flex-direction:column;
+gap:25px;
+}
+
+/* FONT SIZE */
+.big{
+font-size:60px;
+}
+
+.time-big{
+font-size:70px;
+}
+
+.medium{
+font-size:24px;
+}
+
+.small{
+font-size:20px;
+}
+
+#titleAQI{
+font-size:30px;
+}
+
+#weatherMain{
+font-size:28px;
+}
+
+#dateDisplay{
+font-size:20px;
+}
+
+/* ticker */
+.ticker-text{
+font-size:18px;
+}
+
+/* weather sun */
+.sun{
+width:80px;
+height:80px;
+top:40px;
+right:40px;
+}
+
+/* cloud */
+.cloud{
+font-size:80px;
+}
+
+/* credit */
+.credit{
+bottom:10px;
+right:10px;
+transform:scale(0.75);
+}
+
+.credit img{
+height:40px;
+}
+
+.credit-text{
+font-size:14px;
+}
+
+}
 </style>
 </head>
 <body>
@@ -211,26 +431,41 @@ animation:flash 4s infinite;
 <img src="crclogo.png" class="logo">
 <div class="station-name" id="stationTitle"></div>
 </div>
-
+<div class="news-ticker">
+<div class="ticker-text">  พัฒนาและดำเนินการโดย คณะกรรมการบริหารความเสี่ยง วิทยาลัยเชียงราย ร่วมกับ สาขาวิศวกรรมไฟฟ้า คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย      :      Developed and Operated by the Risk Management Committee, Chiangrai College in collaboration with
+the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.      
+</div>
+</div>
 <div class="grid">
 
-<div class="card" id="aqiCard">
+<div class="card card-wide" id="aqiCard">
+
+<div class="card-split">
+
+<!-- AQI -->
+<div class="aqi-section">
 <h2 id="titleAQI"></h2>
 <div class="big" id="aqiValue">--</div>
 <div class="medium" id="aqiStatus"></div>
 <div class="small" id="pmValue"></div>
 </div>
 
-<div class="card">
-<h2 id="titleTime"></h2>
-<div class="small" id="dateDisplay"></div>
-<div class="time-big" id="timeDisplay"></div>
-</div>
-
+<!-- CARD 2 : TEMPERATURE -->
 <div class="card">
 <h2 id="titleTemp"></h2>
 <div class="big" id="temp">-- °C</div>
 <div class="medium" id="humidity">-- %</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- CARD 3 : DATE TIME -->
+<div class="card">
+<h2 id="titleTime"></h2>
+<div class="small" id="dateDisplay"></div>
+<div class="time-big" id="timeDisplay"></div>
 </div>
 
 <div class="card">
@@ -247,7 +482,7 @@ animation:flash 4s infinite;
 <!-- CREDIT มุมขวาล่าง -->
 <div class="credit">
 <img src="CRC_Faculty-of-Engineering_Logo.png" alt="Engineering Logo">
-<div class="credit-text">คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย</div>
+<div class="credit-text"></div>
 </div>
 
 <script>
@@ -265,32 +500,34 @@ const text={
 th:{
 station:"สถานีตรวจวัดสภาพอากาศ วิทยาลัยเชียงราย : สถานีที่ 1 อาคารเฉลิมพระเกียรติ",
 aqi:"ดัชนีคุณภาพอากาศ (AQI)",
-time:"วันที่ & เวลา",
+time:"",
 temp:"อุณหภูมิ & ความชื้น",
-weather:"สภาพอากาศ",
-good:"ดี 😊",
-moderate:"ปานกลาง 😐",
-unhealthy:"เริ่มมีผล 😷",
-danger:"อันตราย ☠️",
+weather:"รายงานสภาพอากาศอัจฉริยะ",
+good:"ดี <span class='aqi-emoji'>😊</span>",
+moderate:"ปานกลาง <span class='aqi-emoji'>😐</span>",
+unhealthy:"เริ่มมีผล <span class='aqi-emoji'>😷</span>",
+danger:"อันตราย <span class='aqi-emoji'>😰</span>",
 wind:"ลม",
 visibility:"ทัศนวิสัย",
 sunrise:"ดวงอาทิตย์ขึ้น",
-sunset:"ตก"
+sunset:"ตก",
+ticker:"🌤 รายงานสภาพอากาศแบบเรียลไทม์ | ระบบตรวจวัดคุณภาพอากาศอัจฉริยะ | วิทยาลัยเชียงราย Smart Weather Station"
 },
 en:{
 station:"Weather Station Chiangrai College : St. 1 Chalermphrakiat Bldg.",
 aqi:"Air Quality Index (AQI)",
-time:"Date & Time",
+time:"",
 temp:"Temperature & Humidity",
-weather:"Weather",
-good:"Good 😊",
-moderate:"Moderate 😐",
-unhealthy:"Unhealthy 😷",
-danger:"Hazardous ☠️",
+weather:"Smart Weather Forecasting",
+good:"Good <span class='aqi-emoji'>😊</span>",
+moderate:"Moderate <span class='aqi-emoji'>😐</span>",
+unhealthy:"Unhealthy <span class='aqi-emoji'>😷</span>",
+danger:"Hazardous <span class='aqi-emoji'>😰</span>",
 wind:"Wind",
 visibility:"Visibility",
 sunrise:"Sunrise",
-sunset:"Sunset"
+sunset:"Sunset",
+ticker:"🌤 Real-time Weather Report | Smart Air Quality Monitoring System | Chiangrai College Smart Weather Station"
 }
 };
 
@@ -316,9 +553,12 @@ let locale=currentLang==="th"?"th-TH":"en-US";
 document.getElementById("dateDisplay").innerText=
 now.toLocaleDateString(locale,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 document.getElementById("timeDisplay").innerText=
-now.toLocaleTimeString(locale);
-}
+now.toLocaleTimeString(locale,{
+hour:'2-digit',
+minute:'2-digit'
+});
 setInterval(updateDateTime,1000);
+}
 
 /* AQI */
 function calculateAQI(pm){
@@ -404,7 +644,7 @@ else if(aqi<=100){status="moderate";card.classList.add("aqi-moderate");}
 else if(aqi<=150){status="unhealthy";card.classList.add("aqi-unhealthy");}
 else{status="danger";card.classList.add("aqi-danger");}
 
-document.getElementById("aqiStatus").innerText=text[currentLang][status];
+document.getElementById("aqiStatus").innerHTML=text[currentLang][status];
 });
 
 fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherKey}&units=metric&lang=${currentLang}`)
@@ -424,7 +664,7 @@ text[currentLang].sunrise+" : "+sunrise.toLocaleTimeString()+
 " | "+
 text[currentLang].sunset+" : "+sunset.toLocaleTimeString();
 
-clearWeather();   // ต้องอยู่ตรงนี้ ก่อนสร้าง effect
+clearWeather();   //  effect
 
 let main = w.weather[0].main;
 
