@@ -138,7 +138,7 @@ text-shadow:0 3px 10px rgba(0,0,0,0.3);
 
 /* TEMPERATURE TITLE */
 #titleTemp{
-color:#cfaef3;
+color:#9143e4;
 font-weight:700;
 }
 
@@ -304,6 +304,12 @@ animation:flash 4s infinite;
 95%{opacity:0.7;}
 96%{opacity:0;}
 }
+#pm10{
+margin-left:80px;
+}
+#pmContainer{
+margin-top:40px;   /* 👈 ปรับตัวนี้ */
+}
 /* ===== MOBILE RESPONSIVE ===== */
 
 @media (max-width:900px){
@@ -384,7 +390,19 @@ font-size:28px;
 #dateDisplay{
 font-size:20px;
 }
+#pm10{
+margin-left:80px;
+}
 
+#pmContainer span{
+min-width:160px;
+text-align:center;
+}
+#pmContainer span{
+background:rgba(255,255,255,0.15);
+padding:6px 14px;
+border-radius:12px;
+}
 /* ticker */
 .ticker-text{
 font-size:18px;
@@ -447,9 +465,11 @@ the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.
 <h2 id="titleAQI"></h2>
 <div class="big" id="aqiValue">--</div>
 <div class="medium" id="aqiStatus"></div>
-<div class="small" id="pmValue"></div>
+<div class="small" id="pmContainer">
+    <span id="pm25"></span>
+    <span id="pm10"></span>
 </div>
-
+</div> 
 <!-- CARD 2 : TEMPERATURE -->
 <div class="card">
 <h2 id="titleTemp"></h2>
@@ -488,7 +508,7 @@ the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.
 <script>
 
 /* CONFIG */
-const channelID="2456050";
+const channelID="3287943";
 const weatherKey="aa04f05208f963755ac32e53fff87d12";
 const lat=19.864625;
 const lon=99.785341;
@@ -512,6 +532,7 @@ visibility:"ทัศนวิสัย",
 sunrise:"ดวงอาทิตย์ขึ้น",
 sunset:"ตก",
 ticker:"🌤 รายงานสภาพอากาศแบบเรียลไทม์ | ระบบตรวจวัดคุณภาพอากาศอัจฉริยะ | วิทยาลัยเชียงราย Smart Weather Station"
+
 },
 en:{
 station:"Weather Station Chiangrai College : St. 1 Chalermphrakiat Bldg.",
@@ -626,13 +647,15 @@ fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json`)
 .then(data=>{
 let temp=parseFloat(data.field1);
 let humidity=parseFloat(data.field2);
-let pm=parseFloat(data.field3);
+let pm25 = parseFloat(data.field3);
+let pm10 = parseFloat(data.field4);
 
 document.getElementById("temp").innerText=temp+" °C";
-document.getElementById("humidity").innerText=humidity+" %";
-document.getElementById("pmValue").innerText="PM2.5 : "+pm+" µg/m³";
+document.getElementById("humidity").innerText="💧" +humidity+" %";
+document.getElementById("pm25").innerText = "PM2.5 : " + pm25 + " µg/m³";
+document.getElementById("pm10").innerText = "PM10 : " + pm10 + " µg/m³";
 
-let aqi=calculateAQI(pm);
+let aqi = calculateAQI(pm25);
 document.getElementById("aqiValue").innerText=aqi;
 
 let card=document.getElementById("aqiCard");
