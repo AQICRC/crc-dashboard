@@ -199,10 +199,10 @@ border-left:2px solid rgba(255,255,255,0.25);
 padding-left:40px;
 }
 /* AQI COLORS */
-.aqi-good{background:linear-gradient(135deg,#11998e,#38ef7d);}
-.aqi-moderate{background:linear-gradient(135deg,#f7971e,#ffd200);}
-.aqi-unhealthy{background:linear-gradient(135deg,#f46b45,#eea849);}
-.aqi-danger{background:linear-gradient(135deg,#c31432,#240b36);}
+.aqi-good{background:linear-gradient(135deg,#00c853,#64dd17);}
+.aqi-moderate{background:linear-gradient(135deg,#ffb300,#ffd54f);}
+.aqi-unhealthy{background:linear-gradient(135deg,#f4511e,#ff7043);}
+.aqi-danger{background:linear-gradient(135deg,#d50000,#ff1744);}
 
 /* ===== CREDIT ===== */
 .credit{
@@ -435,7 +435,24 @@ height:40px;
 .credit-text{
 font-size:14px;
 }
-
+.header-logo{
+height:70px;
+margin-left:15px;
+filter:drop-shadow(0 0 8px rgba(255,255,255,0.7));
+}
+.credit{
+display:none;
+}
+.moon{
+position:absolute;
+top:80px;
+right:120px;
+width:120px;
+height:120px;
+background:radial-gradient(circle,#fff,#cfd8dc);
+border-radius:50%;
+box-shadow:0 0 60px rgba(255,255,255,0.6);
+}
 }
 </style>
 </head>
@@ -446,8 +463,11 @@ font-size:14px;
 <div class="container">
 
 <div class="header">
-<img src="crclogo.png" class="logo">
-<div class="station-name" id="stationTitle"></div>
+  <img src="crclogo.png" class="logo">
+
+  <div class="station-name" id="stationTitle"></div>
+
+  <img src="CRC_Faculty-of-Engineering_Logo.png" class="header-logo">
 </div>
 <div class="news-ticker">
 <div class="ticker-text">  พัฒนาและดำเนินการโดย คณะกรรมการบริหารความเสี่ยง วิทยาลัยเชียงราย ร่วมกับ สาขาวิศวกรรมไฟฟ้า คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย      :      Developed and Operated by the Risk Management Committee, Chiangrai College in collaboration with
@@ -499,11 +519,7 @@ the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.
 </div>
 </div>
 
-<!-- CREDIT มุมขวาล่าง -->
-<div class="credit">
-<img src="CRC_Faculty-of-Engineering_Logo.png" alt="Engineering Logo">
-<div class="credit-text"></div>
-</div>
+
 
 <script>
 
@@ -637,7 +653,14 @@ let l=document.createElement("div");
 l.className="lightning";
 bg.appendChild(l);
 }
+function createMoon(){
+let bg = document.getElementById("weatherBG");
 
+let m = document.createElement("div");
+m.className = "moon";
+
+bg.appendChild(m);
+}
 
 /* LOAD DATA */
 function loadData(){
@@ -692,7 +715,16 @@ clearWeather();   //  effect
 let main = w.weather[0].main;
 
 if(main === "Clear"){
-    createSun();
+
+    let now = new Date();
+    let hour = now.getHours();
+
+    if(hour >= 18 || hour < 6){
+        createMoon();   // 🌙 กลางคืน
+    }else{
+        createSun();    // ☀️ กลางวัน
+    }
+
     createCloud(2);
 }
 else if(main === "Clouds"){
