@@ -670,7 +670,9 @@ if(pm<=12)return scale(pm,0,12,0,50);
 if(pm<=35.4)return scale(pm,12.1,35.4,51,100);
 if(pm<=55.4)return scale(pm,35.5,55.4,101,150);
 if(pm<=150.4)return scale(pm,55.5,150.4,151,200);
-return 300;
+if(pm<=250.4)return scale(pm,150.5,250.4,201,300);
+if(pm<=350.4)return scale(pm,250.5,350.4,301,400);
+return scale(pm,350.5,500.4,401,500);
 }
 function scale(x,a,b,c,d){return Math.round((x-a)*(d-c)/(b-a)+c);}
 
