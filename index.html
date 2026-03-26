@@ -138,7 +138,7 @@ text-shadow:0 3px 10px rgba(0,0,0,0.3);
 
 /* TEMPERATURE TITLE */
 #titleTemp{
-color:#9143e4;
+color:#ebecf1;
 font-weight:700;
 }
 
@@ -151,22 +151,31 @@ font-weight:700;
 
 
 .news-ticker{
-width:100%;
 overflow:hidden;
 white-space:nowrap;
-margin-top:10px;
-background:rgba(0,0,0,0.35);
-border-radius:20px;
-padding:10px 0;
+}
+
+.ticker-track{
+display:flex;
+width:max-content;
+color:#fcfbf9;
+text-shadow:0 0 10px rgba(255,213,79,0.8);
+animation:scrollLoop 50s linear infinite;
 }
 
 .ticker-text{
-display:inline-block;
 white-space:nowrap;
-animation:scrollText 100s linear infinite;
+padding-right:200px;   
 font-size:28px;
-font-weight:600;
-color:white;
+}
+
+@keyframes scrollLoop{
+0%{
+  transform:translateX(0);
+}
+100%{
+  transform:translateX(-50%);
+}
 }
 .aqi-emoji{
 font-size:65px;
@@ -230,7 +239,34 @@ font-size:20px;
 font-weight:700;
 white-space:nowrap;
 }
+#timeCard{
+height:320px;          /* 🔥 ล็อกความสูง */
+overflow:hidden;
+position:relative;
+}
 
+#timeContent{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:flex-start;
+height:100%;
+padding:30px;
+gap:10px;
+}
+
+#imageContent{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+#imageContent img{
+width:100%;
+height:100%;
+object-fit:cover;      /* 🔥 ฟิตการ์ด */
+border-radius:25px;
+}
 /* MOBILE */
 @media(max-width:1000px){
 .grid{grid-template-columns:1fr;}
@@ -403,6 +439,21 @@ background:rgba(255,255,255,0.15);
 padding:6px 14px;
 border-radius:12px;
 }
+#imageContent{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;   /* 
+}
+
+#imageContent img{
+width:100%;
+height:100%;
+object-fit:cover;   /* 
+border-radius:25px;
+}
 /* ticker */
 .ticker-text{
 font-size:18px;
@@ -470,9 +521,17 @@ box-shadow:0 0 60px rgba(255,255,255,0.6);
   <img src="CRC_Faculty-of-Engineering_Logo.png" class="header-logo">
 </div>
 <div class="news-ticker">
-<div class="ticker-text">  พัฒนาและดำเนินการโดย คณะกรรมการบริหารความเสี่ยง วิทยาลัยเชียงราย ร่วมกับ สาขาวิศวกรรมไฟฟ้า คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย      :      Developed and Operated by the Risk Management Committee, Chiangrai College in collaboration with
-the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.      
-</div>
+  <div class="ticker-track">
+    
+    <div class="ticker-text">
+      พัฒนาและดำเนินการโดย คณะกรรมการบริหารความเสี่ยง วิทยาลัยเชียงราย ร่วมกับ สาขาวิศวกรรมไฟฟ้า คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย : Developed and Operated by the Risk Management Committee, Chiangrai College in collaboration with the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.
+     </div>
+
+    <div class="ticker-text">
+      พัฒนาและดำเนินการโดย คณะกรรมการบริหารความเสี่ยง วิทยาลัยเชียงราย ร่วมกับ สาขาวิศวกรรมไฟฟ้า คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย : Developed and Operated by the Risk Management Committee, Chiangrai College in collaboration with the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.
+  </div>
+
+  </div>
 </div>
 <div class="grid">
 
@@ -502,10 +561,18 @@ the Electrical Engineering Program, Faculty of Engineering, Chiangrai College.
 </div>
 
 <!-- CARD 3 : DATE TIME -->
-<div class="card">
-<h2 id="titleTime"></h2>
-<div class="small" id="dateDisplay"></div>
-<div class="time-big" id="timeDisplay"></div>
+<div class="card" id="timeCard">
+
+  <div id="timeContent">
+    <h2 id="titleTime"></h2>
+    <div class="small" id="dateDisplay"></div>
+    <div class="time-big" id="timeDisplay"></div>
+  </div>
+
+  <div id="imageContent" style="display:none;">
+    <img id="slideImage" src="Sta.jpg">
+  </div>
+
 </div>
 
 <div class="card">
@@ -713,6 +780,15 @@ text[currentLang].sunset+" : "+sunset.toLocaleTimeString();
 clearWeather();   //  effect
 
 let main = w.weather[0].main;
+let showTime = true;
+
+setInterval(()=>{
+  showTime = !showTime;
+
+  document.getElementById("timeContent").style.display = showTime ? "block" : "none";
+  document.getElementById("imageContent").style.display = showTime ? "none" : "block";
+
+},10000);
 
 if(main === "Clear"){
 
