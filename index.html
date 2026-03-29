@@ -208,10 +208,30 @@ border-left:2px solid rgba(255,255,255,0.25);
 padding-left:40px;
 }
 /* AQI COLORS */
-.aqi-good{background:linear-gradient(135deg,#00c853,#64dd17);}
-.aqi-moderate{background:linear-gradient(135deg,#ffb300,#ffd54f);}
-.aqi-unhealthy{background:linear-gradient(135deg,#f4511e,#ff7043);}
-.aqi-danger{background:linear-gradient(135deg,#d50000,#ff1744);}
+.aqi-good{
+background:linear-gradient(135deg,#00e400,#66ff66);
+}
+
+.aqi-moderate{
+background:linear-gradient(135deg,#ffeb3b,#fff176);
+color:#333;
+}
+
+.aqi-unhealthy-sensitive{
+background:linear-gradient(135deg,#ff9800,#ffb74d);
+}
+
+.aqi-unhealthy{
+background:linear-gradient(135deg,#f44336,#ff7043);
+}
+
+.aqi-very-unhealthy{
+background:linear-gradient(135deg,#8e24aa,#ba68c8);
+}
+
+.aqi-hazardous{
+background:linear-gradient(135deg,#7e0023,#b71c1c);
+}
 
 /* ===== CREDIT ===== */
 .credit{
@@ -256,15 +276,18 @@ gap:10px;
 }
 
 #imageContent{
+width:100%;
+height:100%;
 display:flex;
 align-items:center;
 justify-content:center;
+overflow:hidden;
 }
 
 #imageContent img{
 width:100%;
 height:100%;
-object-fit:cover;      /* 🔥 ฟิตการ์ด */
+object-fit:cover;
 border-radius:25px;
 }
 /* MOBILE */
@@ -609,10 +632,12 @@ aqi:"ดัชนีคุณภาพอากาศ (AQI)",
 time:"",
 temp:"อุณหภูมิ & ความชื้น",
 weather:"รายงานสภาพอากาศอัจฉริยะ",
-good:"ดี <span class='aqi-emoji'>😊</span>",
-moderate:"ปานกลาง <span class='aqi-emoji'>😐</span>",
-unhealthy:"เริ่มมีผล <span class='aqi-emoji'>😷</span>",
-danger:"อันตราย <span class='aqi-emoji'>😰</span>",
+good:"ดี 😊",
+moderate:"ปานกลาง 😐",
+unhealthy_sensitive:"ไม่ดีต่อกลุ่มเสี่ยง 😷",
+unhealthy:"ไม่ดีต่อสุขภาพ 😷",
+very_unhealthy:"ไม่ดีต่อสุขภาพอย่างยิ่ง 😫",
+hazardous:"อันตราย 😫",
 wind:"ลม",
 visibility:"ทัศนวิสัย",
 sunrise:"ดวงอาทิตย์ขึ้น",
@@ -626,10 +651,12 @@ aqi:"Air Quality Index (AQI)",
 time:"",
 temp:"Temperature & Humidity",
 weather:"Smart Weather Forecasting",
-good:"Good <span class='aqi-emoji'>😊</span>",
-moderate:"Moderate <span class='aqi-emoji'>😐</span>",
-unhealthy:"Unhealthy <span class='aqi-emoji'>😷</span>",
-danger:"Hazardous <span class='aqi-emoji'>😰</span>",
+good:"Good 😊",
+moderate:"Moderate 😐",
+unhealthy_sensitive:"Unhealthy for Sensitive 😷",
+unhealthy:"Unhealthy 😷",
+very_unhealthy:"Very Unhealthy 😫",
+hazardous:"Hazardous 😫",
 wind:"Wind",
 visibility:"Visibility",
 sunrise:"Sunrise",
@@ -657,15 +684,19 @@ loadData();
 function updateDateTime(){
 let now=new Date();
 let locale=currentLang==="th"?"th-TH":"en-US";
-document.getElementById("dateDisplay").innerText=
+
+document.getElementById("dateDisplay").innerText =
 now.toLocaleDateString(locale,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-document.getElementById("timeDisplay").innerText=
+
+document.getElementById("timeDisplay").innerText =
 now.toLocaleTimeString(locale,{
 hour:'2-digit',
 minute:'2-digit'
 });
-setInterval(updateDateTime,1000);
 }
+
+// เรียกแบบนี้แทน
+setInterval(updateDateTime,1000);
 
 /* AQI */
 function calculateAQI(pm){
@@ -710,7 +741,7 @@ for(let i=0;i<count;i++){
 function createRain(){
 let bg = document.getElementById("weatherBG");
 
-for(let i=0;i<120;i++){
+for(let  i=0;i<60;i++){
     let r=document.createElement("div");
     r.className="rain-drop";
     r.style.left=Math.random()*100+"vw";
@@ -750,17 +781,48 @@ document.getElementById("humidity").innerText="💧" +humidity+" %";
 document.getElementById("pm25").innerText = "PM2.5 : " + pm25 + " µg/m³";
 document.getElementById("pm10").innerText = "PM10 : " + pm10 + " µg/m³";
 
-let aqi = calculateAQI(pm25);
+let aqiPM25 = calculateAQI(pm25);
+let aqiPM10 = calculateAQI(pm10);
+
+let aqi = Math.max(aqiPM25, aqiPM10);
 document.getElementById("aqiValue").innerText=aqi;
 
 let card=document.getElementById("aqiCard");
-card.classList.remove("aqi-good","aqi-moderate","aqi-unhealthy","aqi-danger");
+card.classList.remove(
+"aqi-good",
+"aqi-moderate",
+"aqi-unhealthy-sensitive",
+"aqi-unhealthy",
+"aqi-very-unhealthy",
+"aqi-hazardous"
+);
 
 let status="";
-if(aqi<=50){status="good";card.classList.add("aqi-good");}
-else if(aqi<=100){status="moderate";card.classList.add("aqi-moderate");}
-else if(aqi<=150){status="unhealthy";card.classList.add("aqi-unhealthy");}
-else{status="danger";card.classList.add("aqi-danger");}
+
+if(aqi<=50){
+  status="good";
+  card.classList.add("aqi-good");
+}
+else if(aqi<=100){
+  status="moderate";
+  card.classList.add("aqi-moderate");
+}
+else if(aqi<=150){
+  status="unhealthy_sensitive";
+  card.classList.add("aqi-unhealthy-sensitive");
+}
+else if(aqi<=200){
+  status="unhealthy";
+  card.classList.add("aqi-unhealthy");
+}
+else if(aqi<=300){
+  status="very_unhealthy";
+  card.classList.add("aqi-very-unhealthy");
+}
+else{
+  status="hazardous";
+  card.classList.add("aqi-hazardous");
+}
 
 document.getElementById("aqiStatus").innerHTML=text[currentLang][status];
 });
@@ -785,15 +847,6 @@ text[currentLang].sunset+" : "+sunset.toLocaleTimeString();
 clearWeather();   //  effect
 
 let main = w.weather[0].main;
-let showTime = true;
-
-setInterval(()=>{
-  showTime = !showTime;
-
-  document.getElementById("timeContent").style.display = showTime ? "block" : "none";
-  document.getElementById("imageContent").style.display = showTime ? "none" : "block";
-
-},10000);
 
 if(main === "Clear"){
 
@@ -801,9 +854,9 @@ if(main === "Clear"){
     let hour = now.getHours();
 
     if(hour >= 18 || hour < 6){
-        createMoon();   // 🌙 กลางคืน
+        createMoon();   
     }else{
-        createSun();    // ☀️ กลางวัน
+        createSun();    
     }
 
     createCloud(2);
@@ -822,7 +875,15 @@ else if(main === "Thunderstorm"){
 }
 });
 }
+let showTime = true;
 
+setInterval(()=>{
+  showTime = !showTime;
+
+  document.getElementById("timeContent").style.display = showTime ? "block" : "none";
+  document.getElementById("imageContent").style.display = showTime ? "none" : "block";
+
+},10000);
 applyLanguage();
 updateDateTime();
 loadData();
