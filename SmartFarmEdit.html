@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สถานีสมาร์ทฟาร์ม</title>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Anuphan', sans-serif;
+  color:white;
+  overflow:hidden;
+  background:linear-gradient(135deg, #0b3d2e 0%, #0f5c46 35%, #0e6b63 65%, #134e5e 100%);
+  background-attachment:fixed;
+}
+.container{
+  max-width:1500px;
+  margin:auto;
+  padding:40px;
+  position:relative;
+  z-index:2;
+}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  margin-bottom:20px;
+  text-align:center;
+}
+.logo-box{
+  width:200px;
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.logo-box img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  filter:drop-shadow(0 0 10px rgba(255,255,255,0.6));
+}
+.station-name{
+  font-size:38px;
+  font-weight:800;
+  color:white;
+  background:rgba(0,0,0,0.45);
+  padding:12px 28px;
+  border-radius:40px;
+  text-shadow:0 4px 15px rgba(0,0,0,0.7);
+  white-space:nowrap;
+  margin:0 auto;
+}
+.news-ticker{ overflow:hidden; white-space:nowrap; margin-bottom:20px; }
+.ticker-track{
+  display:flex;
+  width:max-content;
+  color:#fcfbf9;
+  text-shadow:0 0 10px rgba(255,213,79,0.8);
+  animation:scrollLoop 45s linear infinite;
+}
+.ticker-text{ white-space:nowrap; padding-right:200px; font-size:26px; }
+@keyframes scrollLoop{ 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:25px;
+}
+.card{
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);
+  border-radius:25px;
+  padding:32px;
+  min-height:220px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.5);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:0.4s;
+}
+.card h2{ margin:0 0 10px 0; font-size:28px; font-weight:700; }
+.card-wide{ grid-column:span 3; }
+
+.big{ font-size:72px; font-weight:700; line-height:1; }
+.medium{ font-size:32px; }
+.small{ font-size:22px; opacity:0.9; }
+
+/* ---------- soil moisture bar ---------- */
+.soil-bar-track{
+  width:100%;
+  height:22px;
+  background:rgba(255,255,255,0.2);
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:10px;
+}
+.soil-bar-fill{
+  height:100%;
+  border-radius:20px;
+  background:linear-gradient(90deg,#8d6e63,#2196f3);
+  transition:width 0.6s ease;
+}
+
+/* ---------- device status row ---------- */
+.device-row{
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.device{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  min-width:180px;
+}
+.device-icon{ font-size:56px; }
+.device-name{ font-size:24px; font-weight:700; }
+.status-badge{
+  font-size:20px;
+  font-weight:800;
+  padding:8px 26px;
+  border-radius:30px;
+  letter-spacing:1px;
+}
+.status-on{ background:#00e400; color:#093; text-shadow:none; }
+.status-off{ background:rgba(255,255,255,0.25); color:#eee; }
+.status-na{ background:rgba(255,255,255,0.15); color:#ccc; font-weight:600; font-size:16px; }
+
+.spin{ animation:spin 3s linear infinite; }
+@keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+.glow{ animation:glowPulse 1.6s ease-in-out infinite; }
+@keyframes glowPulse{
+  0%,100%{ filter:drop-shadow(0 0 6px rgba(255,235,59,0.9)); }
+  50%{ filter:drop-shadow(0 0 18px rgba(255,235,59,1)); }
+}
+
+#dateDisplay{ font-size:26px; font-weight:600; }
+#timeDisplay{ font-size:64px; font-weight:700; }
+
+.settings-btn{
+  position:fixed;
+  top:16px; right:16px;
+  z-index:10;
+  width:48px; height:48px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.45);
+  border:none;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+.settings-overlay{
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:20;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.settings-overlay.open{ display:flex; }
+.settings-panel{
+  background:#0e2b24;
+  border-radius:20px;
+  padding:28px 32px;
+  width:420px;
+  max-width:90vw;
+  max-height:85vh;
+  overflow-y:auto;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+.settings-panel h3{ margin:0 0 18px 0; font-size:22px; }
+.settings-field{ margin-bottom:14px; }
+.settings-field label{ display:block; font-size:14px; margin-bottom:6px; opacity:0.85; }
+.settings-field input, .settings-field select{
+  width:100%; box-sizing:border-box;
+  padding:10px 12px; border-radius:10px;
+  border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.1);
+  color:white; font-size:15px; font-family:inherit;
+}
+.settings-actions{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
+.settings-actions button{
+  flex:1; min-width:110px;
+  padding:12px; border-radius:10px; border:none;
+  font-weight:700; cursor:pointer; font-size:15px;
+}
+.btn-save{ background:#1d9e75; color:white; }
+.btn-copy{ background:rgba(255,255,255,0.15); color:white; }
+.btn-close{ background:transparent; color:#ccc; border:1px solid rgba(255,255,255,0.3) !important; }
+.settings-hint{ font-size:12px; opacity:0.6; margin-top:4px; }
+
+.credit{
+  position:fixed; bottom:16px; right:24px;
+  display:flex; align-items:center; gap:12px; z-index:3;
+  background:rgba(0,0,0,0.45); padding:10px 20px; border-radius:60px;
+  backdrop-filter:blur(10px);
+}
+.credit-text{ font-size:16px; font-weight:700; white-space:nowrap; }
+
+/* ============ TABLET / iPAD (<=1024px) ============ */
+@media(max-width:1024px){
+  body{ overflow:auto; }
+  .header{ flex-wrap:wrap; }
+  .grid{ grid-template-columns:1fr 1fr; }
+  .card-wide{ grid-column:span 2; }
+  .big{ font-size:56px; }
+}
+
+/* ============ MOBILE (<=760px) ============ */
+@media(max-width:760px){
+  .grid{ grid-template-columns:1fr; }
+  .card-wide{ grid-column:span 1; }
+  .logo-box{ width:100px; height:60px; }
+  .station-name{ font-size:22px; padding:8px 18px; white-space:normal; }
+  .big{ font-size:48px; }
+  .device-row{ flex-direction:column; }
+  .credit{ transform:scale(0.85); bottom:8px; right:8px; }
+}
+
+/* ============ SMALL PHONE (<=420px) ============ */
+@media(max-width:420px){
+  .container{ padding:16px; }
+  .logo-box{ width:64px; height:40px; }
+  .station-name{ font-size:16px; padding:6px 12px; }
+  .card{ padding:20px; min-height:auto; }
+  .card h2{ font-size:20px; }
+  .big{ font-size:36px; }
+  .medium{ font-size:22px; }
+  .small{ font-size:16px; }
+  .ticker-text{ font-size:16px; padding-right:100px; }
+  #timeDisplay{ font-size:40px; }
+  .device-icon{ font-size:40px; }
+  .device-name{ font-size:18px; }
+  .status-badge{ font-size:16px; padding:6px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="logo-box"><img src="crclogo.png"></div>
+    <div class="station-name" id="stationTitle">🌱 สถานีสมาร์ทฟาร์มจำลอง วิทยาลัยเชียงราย</div>
+    <div class="logo-box"><img src="CRC_Faculty-of-Engineering_Logo.png"></div>
+    <div class="logo-box"><img src="Logo-DSD.png"></div>
+  </div>
+
+  <div class="news-ticker">
+    <div class="ticker-track">
+      <div class="ticker-text">🌾 ระบบตรวจวัดและควบคุมฟาร์มอัจฉริยะ (Smart Farm Monitoring) | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย ร่วมกับ กรมพัฒนาฝีมือแรงงาน 20 เชียงราย</div>
+      <div class="ticker-text">🌾 ระบบตรวจวัดและควบคุมฟาร์มอัจฉริยะ (Smart Farm Monitoring) | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย ร่วมกับ กรมพัฒนาฝีมือแรงงาน 20 เชียงราย</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>🌡️ อุณหภูมิ &amp; ความชื้นอากาศ</h2>
+      <div class="big" id="temp">-- °C</div>
+      <div class="medium" id="humidity">💧 -- %</div>
+    </div>
+
+    <div class="card">
+      <h2>🌱 ความชื้นในดิน</h2>
+      <div class="big" id="soilPercent">-- %</div>
+      <div class="soil-bar-track"><div class="soil-bar-fill" id="soilBar" style="width:0%"></div></div>
+      <div class="small" id="soilStatusText" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>🕒 วันที่ &amp; เวลา</h2>
+      <div class="small" id="dateDisplay"></div>
+      <div id="timeDisplay">--:--</div>
+    </div>
+
+    <div class="card card-wide">
+      <h2>⚙️ สถานะการทำงานของอุปกรณ์</h2>
+      <div class="device-row">
+
+        <div class="device">
+          <div class="device-icon" id="fanIcon">🌀</div>
+          <div class="device-name">พัดลมระบายความร้อน</div>
+          <div class="status-badge" id="fanStatus">--</div>
+        </div>
+
+        <div class="device">
+          <div class="device-icon" id="pumpIcon">💧</div>
+          <div class="device-name">ปั๊มน้ำรดต้นไม้</div>
+          <div class="status-badge" id="pumpStatus">--</div>
+        </div>
+
+        <div class="device">
+          <div class="device-icon" id="lampIcon">💡</div>
+          <div class="device-name">หลอดไฟส่องสว่าง</div>
+          <div class="status-badge status-na" id="lampStatus">ไม่มีข้อมูลเซนเซอร์แสง</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="settings-btn" id="openSettingsBtn" title="ตั้งค่าแดชบอร์ด">⚙️</button>
+
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <h3>⚙️ ตั้งค่าแดชบอร์ดของคุณ</h3>
+
+    <div class="settings-field">
+      <label>ชื่อสถานี</label>
+      <input type="text" id="cfgName" placeholder="เช่น ฟาร์มของฉัน">
+    </div>
+
+    <div class="settings-field">
+      <label>ThingSpeak Channel ID</label>
+      <input type="text" id="cfgChannel" placeholder="เช่น 3368872">
+    </div>
+
+    <div class="settings-field">
+      <label>ThingSpeak Read API Key</label>
+      <input type="text" id="cfgReadKey" placeholder="เช่น R8U5BML3Y7VZE5J9">
+      <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น (Write API Key ใช้ในโค้ด Arduino ไม่ต้องใส่ที่นี่)</div>
+    </div>
+
+    <div class="settings-field">
+      <label>ธีมพื้นหลัง</label>
+      <select id="cfgTheme">
+        <option value="green">เขียว-ฟ้า (ค่าเริ่มต้น)</option>
+        <option value="blue">น้ำเงินเข้ม</option>
+        <option value="purple">ม่วง-ชมพู</option>
+        <option value="sunset">ส้ม-แดง (Sunset)</option>
+      </select>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn-save" id="btnSaveCfg">บันทึก</button>
+      <button class="btn-copy" id="btnCopyLink">คัดลอกลิงก์</button>
+      <button class="btn-close" id="btnCloseCfg">ปิด</button>
+    </div>
+    <div class="settings-hint" id="copyMsg" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<div class="credit">
+  <span class="credit-text">Smart Farm Chiangrai College</span>
+</div>
+
+<script>
+const THEMES = {
+  green:  "linear-gradient(135deg, #0b3d2e 0%, #0f5c46 35%, #0e6b63 65%, #134e5e 100%)",
+  blue:   "linear-gradient(135deg, #0b1d3d 0%, #123a63 35%, #1a5c8a 65%, #0e3e5e 100%)",
+  purple: "linear-gradient(135deg, #2a0e3d 0%, #4a1263 35%, #6a1a8a 65%, #3d0e5e 100%)",
+  sunset: "linear-gradient(135deg, #4d1a0e 0%, #8a2e12 35%, #c94a1a 65%, #5e2b0e 100%)"
+};
+
+const DEFAULTS = {
+  name: "สถานีสมาร์ทฟาร์มจำลอง วิทยาลัยเชียงราย",
+  channel: "3368872",
+  read: "R8U5BML3Y7VZE5J9",
+  theme: "green"
+};
+
+function loadConfig(){
+  const params = new URLSearchParams(window.location.search);
+  const saved = JSON.parse(localStorage.getItem("smartFarmConfig") || "{}");
+  return {
+    name: params.get("name") || saved.name || DEFAULTS.name,
+    channel: params.get("channel") || saved.channel || DEFAULTS.channel,
+    read: params.get("read") || saved.read || DEFAULTS.read,
+    theme: params.get("theme") || saved.theme || DEFAULTS.theme
+  };
+}
+
+let appConfig = loadConfig();
+
+function applyConfig(cfg){
+  document.getElementById("stationTitle").innerText = "🌱 " + cfg.name;
+  document.body.style.background = THEMES[cfg.theme] || THEMES.green;
+  document.body.style.backgroundAttachment = "fixed";
+}
+applyConfig(appConfig);
+
+const channelID = appConfig.channel;
+const readApiKey = appConfig.read;
+const SOIL_DRY_PERCENT = 30;
+const SOIL_WET_PERCENT = 60;
+
+function updateDateTime(){
+  const now = new Date();
+  document.getElementById("dateDisplay").innerText =
+    now.toLocaleDateString("th-TH",{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById("timeDisplay").innerText =
+    now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+function setDeviceStatus(elId, iconId, isOn, animClass){
+  const el = document.getElementById(elId);
+  const icon = document.getElementById(iconId);
+  el.classList.remove("status-on","status-off");
+  icon.classList.remove(animClass);
+  if(isOn){
+    el.textContent = "ทำงาน (ON)";
+    el.classList.add("status-on");
+    icon.classList.add(animClass);
+  } else {
+    el.textContent = "ปิด (OFF)";
+    el.classList.add("status-off");
+  }
+}
+
+function loadData(){
+  fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readApiKey}`)
+    .then(res => res.json())
+    .then(data => {
+      const temp = parseFloat(data.field1);
+      const humidity = parseFloat(data.field2);
+      const soil = parseFloat(data.field3);
+      const fanState = parseInt(data.field4);
+      const pumpState = parseInt(data.field5);
+      const lampState = parseInt(data.field6);
+
+      document.getElementById("temp").innerText = isNaN(temp) ? "-- °C" : temp.toFixed(1) + " °C";
+      document.getElementById("humidity").innerText = isNaN(humidity) ? "💧 -- %" : "💧 " + humidity.toFixed(0) + " %";
+
+      const soilVal = isNaN(soil) ? 0 : Math.max(0, Math.min(100, soil));
+      document.getElementById("soilPercent").innerText = isNaN(soil) ? "-- %" : soilVal.toFixed(0) + " %";
+      document.getElementById("soilBar").style.width = soilVal + "%";
+
+      let soilText = "";
+      if(soilVal < SOIL_DRY_PERCENT) soilText = "🟤 ดินแห้ง";
+      else if(soilVal > SOIL_WET_PERCENT) soilText = "🔵 ชื้นเพียงพอ";
+      else soilText = "⚪ ปานกลาง";
+      document.getElementById("soilStatusText").innerText = soilText;
+
+      if(!isNaN(fanState)){
+        setDeviceStatus("fanStatus","fanIcon", fanState === 1, "spin");
+      }
+      if(!isNaN(pumpState)){
+        setDeviceStatus("pumpStatus","pumpIcon", pumpState === 1, "spin");
+      }
+      if(!isNaN(lampState)){
+        document.getElementById("lampStatus").classList.remove("status-na");
+        setDeviceStatus("lampStatus","lampIcon", lampState === 1, "glow");
+      }
+    })
+    .catch(err => console.error("โหลดข้อมูลจาก ThingSpeak ไม่สำเร็จ:", err));
+}
+
+loadData();
+setInterval(loadData, 20000);
+
+const overlay = document.getElementById("settingsOverlay");
+const openBtn = document.getElementById("openSettingsBtn");
+const closeBtn = document.getElementById("btnCloseCfg");
+const saveBtn = document.getElementById("btnSaveCfg");
+const copyBtn = document.getElementById("btnCopyLink");
+const copyMsg = document.getElementById("copyMsg");
+
+function fillFormFromConfig(){
+  document.getElementById("cfgName").value = appConfig.name;
+  document.getElementById("cfgChannel").value = appConfig.channel;
+  document.getElementById("cfgReadKey").value = appConfig.read;
+  document.getElementById("cfgTheme").value = appConfig.theme;
+}
+
+function buildShareUrl(){
+  const p = new URLSearchParams();
+  p.set("name", document.getElementById("cfgName").value || DEFAULTS.name);
+  p.set("channel", document.getElementById("cfgChannel").value || DEFAULTS.channel);
+  p.set("read", document.getElementById("cfgReadKey").value || DEFAULTS.read);
+  p.set("theme", document.getElementById("cfgTheme").value || DEFAULTS.theme);
+  return window.location.origin + window.location.pathname + "?" + p.toString();
+}
+
+openBtn.addEventListener("click", () => {
+  fillFormFromConfig();
+  copyMsg.innerText = "";
+  overlay.classList.add("open");
+});
+closeBtn.addEventListener("click", () => overlay.classList.remove("open"));
+overlay.addEventListener("click", (e) => { if(e.target === overlay) overlay.classList.remove("open"); });
+
+saveBtn.addEventListener("click", () => {
+  const newCfg = {
+    name: document.getElementById("cfgName").value || DEFAULTS.name,
+    channel: document.getElementById("cfgChannel").value || DEFAULTS.channel,
+    read: document.getElementById("cfgReadKey").value || DEFAULTS.read,
+    theme: document.getElementById("cfgTheme").value || DEFAULTS.theme
+  };
+  localStorage.setItem("smartFarmConfig", JSON.stringify(newCfg));
+  window.location.href = buildShareUrl();
+});
+
+copyBtn.addEventListener("click", () => {
+  const url = buildShareUrl();
+  navigator.clipboard.writeText(url).then(() => {
+    copyMsg.innerText = "คัดลอกลิงก์แล้ว: วางไปแชร์ได้เลย";
+  }).catch(() => {
+    copyMsg.innerText = url;
+  });
+});
+</script>
+</body>
+</html>
