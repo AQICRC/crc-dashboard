@@ -189,6 +189,10 @@ body{
   background:rgba(255,255,255,0.1);
   color:white; font-size:15px; font-family:inherit;
 }
+.settings-field select option{
+  color:#111827;
+  background:#ffffff;
+}
 .settings-actions{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
 .settings-actions button{
   flex:1; min-width:110px;
@@ -321,17 +325,17 @@ body{
 
     <div class="settings-field">
       <label>ชื่อสถานี</label>
-      <input type="text" id="cfgName" placeholder="เช่น ฟาร์มของฉัน">
+      <input type="text" id="cfgName" placeholder="เช่น ตั้งชื่อฟาร์มของคุณ">
     </div>
 
     <div class="settings-field">
       <label>ThingSpeak Channel ID</label>
-      <input type="text" id="cfgChannel" placeholder="เช่น 3368872">
+      <input type="text" id="cfgChannel" placeholder="เช่น ใส่ Channel ID ของคุณ">
     </div>
 
     <div class="settings-field">
       <label>ThingSpeak Read API Key</label>
-      <input type="text" id="cfgReadKey" placeholder="เช่น R8U5BML3Y7VZE5J9">
+      <input type="text" id="cfgReadKey" placeholder="เช่น ใส่ API Key ของคุณ">
       <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น (Write API Key ใช้ในโค้ด Arduino ไม่ต้องใส่ที่นี่)</div>
     </div>
 
