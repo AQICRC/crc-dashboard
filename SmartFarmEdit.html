@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>สถานีสมาร์ทฟาร์ม</title>
 <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <style>
 body{
@@ -204,6 +205,51 @@ body{
 .btn-close{ background:transparent; color:#ccc; border:1px solid rgba(255,255,255,0.3) !important; }
 .settings-hint{ font-size:12px; opacity:0.6; margin-top:4px; }
 
+.card{ position:relative; }
+.chart-trigger{
+  position:absolute;
+  bottom:14px; right:14px;
+  width:38px; height:38px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.18);
+  border:none;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:0.2s;
+}
+.chart-trigger:hover{ background:rgba(255,255,255,0.32); }
+
+.chart-overlay{
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.65);
+  z-index:25;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.chart-overlay.open{ display:flex; }
+.chart-panel{
+  background:#0e2b24;
+  border-radius:20px;
+  padding:24px 28px;
+  width:640px;
+  max-width:92vw;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+.chart-panel-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:14px;
+}
+.chart-panel-header h3{ margin:0; font-size:20px; }
+.chart-close-btn{
+  background:transparent; border:none; color:#ccc;
+  font-size:22px; cursor:pointer; line-height:1;
+}
+.chart-canvas-wrap{ position:relative; height:280px; }
+.chart-loading-text{ font-size:13px; opacity:0.7; margin-top:8px; text-align:center; }
+
 .credit{
   position:fixed; bottom:16px; right:24px;
   display:flex; align-items:center; gap:12px; z-index:3;
@@ -276,6 +322,7 @@ body{
       <h2>🌡️ อุณหภูมิ &amp; ความชื้นอากาศ</h2>
       <div class="big" id="temp">-- °C</div>
       <div class="medium" id="humidity">💧 -- %</div>
+      <button class="chart-trigger" id="openTempChart" title="ดูกราฟย้อนหลัง">📈</button>
     </div>
 
     <div class="card">
@@ -283,6 +330,7 @@ body{
       <div class="big" id="soilPercent">-- %</div>
       <div class="soil-bar-track"><div class="soil-bar-fill" id="soilBar" style="width:0%"></div></div>
       <div class="small" id="soilStatusText" style="margin-top:8px;"></div>
+      <button class="chart-trigger" id="openSoilChart" title="ดูกราฟย้อนหลัง">📈</button>
     </div>
 
     <div class="card">
@@ -349,7 +397,7 @@ body{
     <div class="settings-field">
       <label>ThingSpeak Read API Key</label>
       <input type="password" id="cfgReadKey" placeholder="เช่น CRCEN123456789" autocomplete="off">
-      <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น )</div>
+      <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น (Write API Key ใช้ในโค้ด Arduino ไม่ต้องใส่ที่นี่)</div>
       <label style="display:flex; align-items:center; gap:6px; margin-top:8px; cursor:pointer; font-size:13px; opacity:0.8;">
         <input type="checkbox" id="toggleShowSecrets" style="width:auto;"> แสดงค่าที่พิมพ์
       </label>
@@ -374,7 +422,7 @@ body{
     <div class="settings-field">
       <label>หรืออัปโหลดรูปพื้นหลังของคุณเอง (เก็บแค่ในเครื่องนี้)</label>
       <input type="file" id="cfgBgFile" accept="image/*">
-      <div class="settings-hint">รูปจะถูกจำไว้เฉพาะเบราว์เซอร์/เครื่องนี้เท่านั้น (ไฟล์ใหญ่เกิน ~3MB อาจบันทึกไม่ได้) — ถ้าใส่ลิงก์รูปด้านบนไว้ด้วย ลิงก์รูปจะถูกใช้ก่อนเสมอ</div>
+      <div class="settings-hint">รูปจะถูกจำไว้เฉพาะเบราว์เซอร์/เครื่องนี้เท่านั้น ไม่ถูกอัปโหลดขึ้นที่ไหน และไม่รวมอยู่ในลิงก์ที่คัดลอก (ไฟล์ใหญ่เกิน ~3MB อาจบันทึกไม่ได้) — ถ้าใส่ลิงก์รูปด้านบนไว้ด้วย ลิงก์รูปจะถูกใช้ก่อนเสมอ</div>
       <div id="bgPreviewWrap" style="display:none; margin-top:10px;">
         <img id="bgPreview" style="width:100%; max-height:100px; object-fit:cover; border-radius:10px;">
         <button type="button" id="btnRemoveBg" style="margin-top:8px; width:100%; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.3); background:transparent; color:#f0a; cursor:pointer;">ลบรูปพื้นหลัง กลับไปใช้ธีมสี</button>
@@ -387,6 +435,19 @@ body{
       <button class="btn-close" id="btnCloseCfg">ปิด</button>
     </div>
     <div class="settings-hint" id="copyMsg" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<div class="chart-overlay" id="chartOverlay">
+  <div class="chart-panel">
+    <div class="chart-panel-header">
+      <h3 id="chartTitle">กราฟย้อนหลัง</h3>
+      <button class="chart-close-btn" id="btnCloseChart">✕</button>
+    </div>
+    <div class="chart-canvas-wrap">
+      <canvas id="historyChartCanvas"></canvas>
+    </div>
+    <div class="chart-loading-text" id="chartLoadingText">กำลังโหลดข้อมูล...</div>
   </div>
 </div>
 
@@ -514,7 +575,133 @@ function loadData(){
     .catch(err => console.error("โหลดข้อมูลจาก ThingSpeak ไม่สำเร็จ:", err));
 }
 
-const dashboardContent = document.getElementById("dashboardContent");
+let historyChart = null;
+const chartOverlay = document.getElementById("chartOverlay");
+const chartTitleEl = document.getElementById("chartTitle");
+const chartLoadingText = document.getElementById("chartLoadingText");
+
+function closeChartModal(){
+  chartOverlay.classList.remove("open");
+}
+document.getElementById("btnCloseChart").addEventListener("click", closeChartModal);
+chartOverlay.addEventListener("click", (e) => { if(e.target === chartOverlay) closeChartModal(); });
+
+async function openHistoryChart(mode){
+  chartOverlay.classList.add("open");
+  chartLoadingText.style.display = "block";
+  chartLoadingText.innerText = "กำลังโหลดข้อมูล...";
+  chartTitleEl.innerText = mode === "temp" ? "🌡️ อุณหภูมิ & ความชื้น ย้อนหลัง 24 ชม." : "🌱 ความชื้นในดิน ย้อนหลัง 24 ชม.";
+
+  try{
+    const res = await fetch(`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readApiKey}&days=1`);
+    const data = await res.json();
+    const feeds = data.feeds || [];
+
+    const labels = feeds.map(f => {
+      const d = new Date(f.created_at);
+      return d.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
+    });
+
+    if(historyChart){ historyChart.destroy(); }
+    const ctx = document.getElementById("historyChartCanvas").getContext("2d");
+
+    if(mode === "temp"){
+      const tempData = feeds.map(f => f.field1 !== null ? parseFloat(f.field1) : null);
+      const humidData = feeds.map(f => f.field2 !== null ? parseFloat(f.field2) : null);
+      historyChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "อุณหภูมิ (°C)",
+              data: tempData,
+              borderColor: "#ff7043",
+              backgroundColor: "rgba(255,112,67,0.15)",
+              yAxisID: "y",
+              tension: 0.35,
+              pointRadius: 0,
+              borderWidth: 2.5,
+              fill: true
+            },
+            {
+              label: "ความชื้น (%)",
+              data: humidData,
+              borderColor: "#42a5f5",
+              backgroundColor: "rgba(66,165,245,0.1)",
+              yAxisID: "y1",
+              tension: 0.35,
+              pointRadius: 0,
+              borderWidth: 2.5,
+              fill: true
+            }
+          ]
+        },
+        options: chartOptions(true)
+      });
+    } else {
+      const soilData = feeds.map(f => f.field3 !== null ? parseFloat(f.field3) : null);
+      historyChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "ความชื้นในดิน (%)",
+              data: soilData,
+              borderColor: "#66bb6a",
+              backgroundColor: "rgba(102,187,106,0.15)",
+              yAxisID: "y",
+              tension: 0.35,
+              pointRadius: 0,
+              borderWidth: 2.5,
+              fill: true
+            }
+          ]
+        },
+        options: chartOptions(false)
+      });
+    }
+    chartLoadingText.style.display = "none";
+  } catch(err){
+    chartLoadingText.innerText = "โหลดข้อมูลกราฟไม่สำเร็จ ลองใหม่อีกครั้ง";
+    console.error(err);
+  }
+}
+
+function chartOptions(dualAxis){
+  const base = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: { labels: { color: "#fff", font: { family: "Anuphan" } } },
+      tooltip: { mode: "index", intersect: false }
+    },
+    scales: {
+      x: {
+        ticks: { color: "#ddd", maxTicksLimit: 6 },
+        grid: { color: "rgba(255,255,255,0.08)" }
+      },
+      y: {
+        position: "left",
+        ticks: { color: "#ddd" },
+        grid: { color: "rgba(255,255,255,0.08)" }
+      }
+    }
+  };
+  if(dualAxis){
+    base.scales.y1 = {
+      position: "right",
+      ticks: { color: "#ddd" },
+      grid: { display: false }
+    };
+  }
+  return base;
+}
+
+document.getElementById("openTempChart").addEventListener("click", () => openHistoryChart("temp"));
+document.getElementById("openSoilChart").addEventListener("click", () => openHistoryChart("soil"));
 const onboardingScreen = document.getElementById("onboardingScreen");
 
 function isConfigComplete(cfg){
