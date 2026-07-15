@@ -261,6 +261,8 @@ body{
     <div class="logo-box"><img src="Logo-DSD.png"></div>
   </div>
 
+  <div id="dashboardContent" style="display:none;">
+
   <div class="news-ticker">
     <div class="ticker-track">
       <div class="ticker-text">🌾 ระบบตรวจวัดและควบคุมฟาร์มอัจฉริยะ (Smart Farm Monitoring) | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย ร่วมกับ กรมพัฒนาฝีมือแรงงาน 20 เชียงราย</div>
@@ -315,6 +317,17 @@ body{
     </div>
 
   </div>
+
+  </div>
+
+  <div id="onboardingScreen" style="display:none; text-align:center; padding:80px 20px;">
+    <div style="font-size:60px; margin-bottom:16px;">🌾</div>
+    <h2 style="font-size:28px; margin-bottom:12px;">ยังไม่ได้ตั้งค่าแดชบอร์ด</h2>
+    <p style="font-size:16px; opacity:0.85; max-width:480px; margin:0 auto 28px;">
+      กรุณากรอก ThingSpeak Channel ID และ Read API Key ของคุณก่อน ถึงจะเริ่มแสดงข้อมูลได้
+    </p>
+    <button id="openSettingsFromOnboarding" style="padding:14px 32px; border-radius:12px; border:none; background:#1d9e75; color:white; font-weight:700; font-size:16px; cursor:pointer;">⚙️ ตั้งค่าตอนนี้</button>
+  </div>
 </div>
 
 <button class="settings-btn" id="openSettingsBtn" title="ตั้งค่าแดชบอร์ด">⚙️</button>
@@ -325,18 +338,21 @@ body{
 
     <div class="settings-field">
       <label>ชื่อสถานี</label>
-      <input type="text" id="cfgName" placeholder="เช่น ตั้งชื่อฟาร์มของคุณ">
+      <input type="text" id="cfgName" placeholder="เช่น ฟาร์มของฉัน">
     </div>
 
     <div class="settings-field">
       <label>ThingSpeak Channel ID</label>
-      <input type="text" id="cfgChannel" placeholder="เช่น ใส่ Channel ID ของคุณ">
+      <input type="password" id="cfgChannel" placeholder="เช่น 3368872" autocomplete="off">
     </div>
 
     <div class="settings-field">
       <label>ThingSpeak Read API Key</label>
-      <input type="text" id="cfgReadKey" placeholder="เช่น ใส่ API Key ของคุณ">
+      <input type="password" id="cfgReadKey" placeholder="เช่น R8U5BML3Y7VZE5J9" autocomplete="off">
       <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น (Write API Key ใช้ในโค้ด Arduino ไม่ต้องใส่ที่นี่)</div>
+      <label style="display:flex; align-items:center; gap:6px; margin-top:8px; cursor:pointer; font-size:13px; opacity:0.8;">
+        <input type="checkbox" id="toggleShowSecrets" style="width:auto;"> แสดงค่าที่พิมพ์
+      </label>
     </div>
 
     <div class="settings-field">
@@ -359,7 +375,7 @@ body{
 </div>
 
 <div class="credit">
-  <span class="credit-text">Smart Farm Chiangrai College</span>
+  <span class="credit-text">Powered by Faculty of Engineering, Chiangrai College</span>
 </div>
 
 <script>
@@ -372,8 +388,8 @@ const THEMES = {
 
 const DEFAULTS = {
   name: "สถานีสมาร์ทฟาร์มจำลอง วิทยาลัยเชียงราย",
-  channel: "3368872",
-  read: "R8U5BML3Y7VZE5J9",
+  channel: "",
+  read: "",
   theme: "green"
 };
 
@@ -465,15 +481,37 @@ function loadData(){
     .catch(err => console.error("โหลดข้อมูลจาก ThingSpeak ไม่สำเร็จ:", err));
 }
 
-loadData();
-setInterval(loadData, 20000);
+const dashboardContent = document.getElementById("dashboardContent");
+const onboardingScreen = document.getElementById("onboardingScreen");
+
+function isConfigComplete(cfg){
+  return !!(cfg.channel && cfg.read);
+}
+
+if(isConfigComplete(appConfig)){
+  dashboardContent.style.display = "block";
+  onboardingScreen.style.display = "none";
+  loadData();
+  setInterval(loadData, 20000);
+} else {
+  dashboardContent.style.display = "none";
+  onboardingScreen.style.display = "block";
+}
 
 const overlay = document.getElementById("settingsOverlay");
 const openBtn = document.getElementById("openSettingsBtn");
+const openFromOnboardingBtn = document.getElementById("openSettingsFromOnboarding");
 const closeBtn = document.getElementById("btnCloseCfg");
 const saveBtn = document.getElementById("btnSaveCfg");
 const copyBtn = document.getElementById("btnCopyLink");
 const copyMsg = document.getElementById("copyMsg");
+const toggleShowSecrets = document.getElementById("toggleShowSecrets");
+
+toggleShowSecrets.addEventListener("change", () => {
+  const t = toggleShowSecrets.checked ? "text" : "password";
+  document.getElementById("cfgChannel").type = t;
+  document.getElementById("cfgReadKey").type = t;
+});
 
 function fillFormFromConfig(){
   document.getElementById("cfgName").value = appConfig.name;
@@ -496,14 +534,25 @@ openBtn.addEventListener("click", () => {
   copyMsg.innerText = "";
   overlay.classList.add("open");
 });
+openFromOnboardingBtn.addEventListener("click", () => {
+  fillFormFromConfig();
+  copyMsg.innerText = "";
+  overlay.classList.add("open");
+});
 closeBtn.addEventListener("click", () => overlay.classList.remove("open"));
 overlay.addEventListener("click", (e) => { if(e.target === overlay) overlay.classList.remove("open"); });
 
 saveBtn.addEventListener("click", () => {
+  const chVal = document.getElementById("cfgChannel").value.trim();
+  const rdVal = document.getElementById("cfgReadKey").value.trim();
+  if(!chVal || !rdVal){
+    copyMsg.innerText = "กรุณากรอก Channel ID และ Read API Key ให้ครบก่อนบันทึก";
+    return;
+  }
   const newCfg = {
     name: document.getElementById("cfgName").value || DEFAULTS.name,
-    channel: document.getElementById("cfgChannel").value || DEFAULTS.channel,
-    read: document.getElementById("cfgReadKey").value || DEFAULTS.read,
+    channel: chVal,
+    read: rdVal,
     theme: document.getElementById("cfgTheme").value || DEFAULTS.theme
   };
   localStorage.setItem("smartFarmConfig", JSON.stringify(newCfg));
