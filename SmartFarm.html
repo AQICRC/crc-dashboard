@@ -31,6 +31,7 @@ body::before{
 }
 .header{
   display:flex;
+  flex-wrap:wrap;
   align-items:center;
   justify-content:center;
   gap:20px;
@@ -40,6 +41,7 @@ body::before{
 .logo, .header-logo{
   width:220px;
   height:auto;
+  flex-shrink:0;
   filter:drop-shadow(0 0 10px rgba(255,255,255,0.6));
 }
 .station-name{
@@ -151,15 +153,40 @@ body::before{
 }
 .credit-text{ font-size:16px; font-weight:700; white-space:nowrap; }
 
-@media(max-width:1000px){
+/* ============ TABLET / iPAD (<=1024px) ============ */
+@media(max-width:1024px){
   body{ overflow:auto; }
+  .grid{ grid-template-columns:1fr 1fr; }
+  .card-wide{ grid-column:span 2; }
+  .big{ font-size:56px; }
+}
+
+/* ============ MOBILE (<=760px) ============ */
+@media(max-width:760px){
   .grid{ grid-template-columns:1fr; }
   .card-wide{ grid-column:span 1; }
-  .logo, .header-logo{ width:130px; }
-  .station-name{ font-size:20px; padding:8px 16px; white-space:normal; }
+  .logo, .header-logo{ width:110px; }
+  .station-name{ font-size:22px; padding:8px 18px; white-space:normal; }
   .big{ font-size:48px; }
   .device-row{ flex-direction:column; }
-  .credit{ transform:scale(0.8); bottom:8px; right:8px; }
+  .credit{ transform:scale(0.85); bottom:8px; right:8px; }
+}
+
+/* ============ SMALL PHONE (<=420px) ============ */
+@media(max-width:420px){
+  .container{ padding:16px; }
+  .logo, .header-logo{ width:72px; }
+  .station-name{ font-size:16px; padding:6px 12px; }
+  .card{ padding:20px; min-height:auto; }
+  .card h2{ font-size:20px; }
+  .big{ font-size:36px; }
+  .medium{ font-size:22px; }
+  .small{ font-size:16px; }
+  .ticker-text{ font-size:16px; padding-right:100px; }
+  #timeDisplay{ font-size:40px; }
+  .device-icon{ font-size:40px; }
+  .device-name{ font-size:18px; }
+  .status-badge{ font-size:16px; padding:6px 18px; }
 }
 </style>
 </head>
@@ -183,14 +210,12 @@ body::before{
 
   <div class="grid">
 
-    <!-- อุณหภูมิ/ความชื้นอากาศ -->
     <div class="card">
       <h2>🌡️ อุณหภูมิ &amp; ความชื้นอากาศ</h2>
       <div class="big" id="temp">-- °C</div>
       <div class="medium" id="humidity">💧 -- %</div>
     </div>
 
-    <!-- ความชื้นในดิน -->
     <div class="card">
       <h2>🌱 ความชื้นในดิน</h2>
       <div class="big" id="soilPercent">-- %</div>
@@ -198,14 +223,12 @@ body::before{
       <div class="small" id="soilStatusText" style="margin-top:8px;"></div>
     </div>
 
-    <!-- วันเวลา -->
     <div class="card">
       <h2>🕒 วันที่ &amp; เวลา</h2>
       <div class="small" id="dateDisplay"></div>
       <div id="timeDisplay">--:--</div>
     </div>
 
-    <!-- สถานะอุปกรณ์ -->
     <div class="card card-wide">
       <h2>⚙️ สถานะการทำงานของอุปกรณ์</h2>
       <div class="device-row">
@@ -239,15 +262,11 @@ body::before{
 </div>
 
 <script>
-/* ================= CONFIG ================= */
 const channelID = "3368872";
 const readApiKey = "R8U5BML3Y7VZE5J9";
-
-// ใช้แค่แสดงข้อความสถานะดิน (แห้ง/ปานกลาง/ชื้น) ไม่ได้ใช้คำนวณสถานะ relay แล้ว
 const SOIL_DRY_PERCENT = 30;
 const SOIL_WET_PERCENT = 60;
 
-/* ================= DATE / TIME ================= */
 function updateDateTime(){
   const now = new Date();
   document.getElementById("dateDisplay").innerText =
@@ -258,7 +277,6 @@ function updateDateTime(){
 setInterval(updateDateTime, 1000);
 updateDateTime();
 
-/* ================= STATUS HELPERS ================= */
 function setDeviceStatus(elId, iconId, isOn, animClass){
   const el = document.getElementById(elId);
   const icon = document.getElementById(iconId);
@@ -274,7 +292,6 @@ function setDeviceStatus(elId, iconId, isOn, animClass){
   }
 }
 
-/* ================= LOAD DATA FROM THINGSPEAK ================= */
 function loadData(){
   fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readApiKey}`)
     .then(res => res.json())
@@ -282,15 +299,13 @@ function loadData(){
       const temp = parseFloat(data.field1);
       const humidity = parseFloat(data.field2);
       const soil = parseFloat(data.field3);
-      const fanState = parseInt(data.field4);    // 1 = เปิด, 0 = ปิด (ส่งจาก Arduino จริง)
+      const fanState = parseInt(data.field4);
       const pumpState = parseInt(data.field5);
       const lampState = parseInt(data.field6);
 
-      // อุณหภูมิ / ความชื้นอากาศ
       document.getElementById("temp").innerText = isNaN(temp) ? "-- °C" : temp.toFixed(1) + " °C";
       document.getElementById("humidity").innerText = isNaN(humidity) ? "💧 -- %" : "💧 " + humidity.toFixed(0) + " %";
 
-      // ความชื้นในดิน
       const soilVal = isNaN(soil) ? 0 : Math.max(0, Math.min(100, soil));
       document.getElementById("soilPercent").innerText = isNaN(soil) ? "-- %" : soilVal.toFixed(0) + " %";
       document.getElementById("soilBar").style.width = soilVal + "%";
@@ -301,7 +316,6 @@ function loadData(){
       else soilText = "⚪ ปานกลาง";
       document.getElementById("soilStatusText").innerText = soilText;
 
-      // ---------- สถานะจริงจาก Arduino (field4-6) ----------
       if(!isNaN(fanState)){
         setDeviceStatus("fanStatus","fanIcon", fanState === 1, "spin");
       }
@@ -309,18 +323,15 @@ function loadData(){
         setDeviceStatus("pumpStatus","pumpIcon", pumpState === 1, "spin");
       }
       if(!isNaN(lampState)){
-        const lampEl = document.getElementById("lampStatus");
-        lampEl.classList.remove("status-na");
+        document.getElementById("lampStatus").classList.remove("status-na");
         setDeviceStatus("lampStatus","lampIcon", lampState === 1, "glow");
       }
     })
-    .catch(err => {
-      console.error("โหลดข้อมูลจาก ThingSpeak ไม่สำเร็จ:", err);
-    });
+    .catch(err => console.error("โหลดข้อมูลจาก ThingSpeak ไม่สำเร็จ:", err));
 }
 
 loadData();
-setInterval(loadData, 20000); // ดึงข้อมูลใหม่ทุก 20 วินาที
+setInterval(loadData, 20000);
 </script>
 </body>
 </html>
