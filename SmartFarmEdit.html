@@ -349,20 +349,36 @@ body{
     <div class="settings-field">
       <label>ThingSpeak Read API Key</label>
       <input type="password" id="cfgReadKey" placeholder="เช่น CRCEN123456789" autocomplete="off">
-      <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น (Write API Key ใช้ในโค้ด Arduino ไม่ต้องใส่ที่นี่)</div>
+      <div class="settings-hint">ใส่เฉพาะ Read API Key เท่านั้น )</div>
       <label style="display:flex; align-items:center; gap:6px; margin-top:8px; cursor:pointer; font-size:13px; opacity:0.8;">
         <input type="checkbox" id="toggleShowSecrets" style="width:auto;"> แสดงค่าที่พิมพ์
       </label>
     </div>
 
     <div class="settings-field">
-      <label>ธีมพื้นหลัง</label>
+      <label>ธีมพื้นหลัง (แบบสี)</label>
       <select id="cfgTheme">
         <option value="green">เขียว-ฟ้า (ค่าเริ่มต้น)</option>
         <option value="blue">น้ำเงินเข้ม</option>
         <option value="purple">ม่วง-ชมพู</option>
         <option value="sunset">ส้ม-แดง (Sunset)</option>
       </select>
+    </div>
+
+    <div class="settings-field">
+      <label>หรือวางลิงก์รูปภาพ (จะติดไปกับลิงก์แชร์ด้วย)</label>
+      <input type="text" id="cfgBgUrl" placeholder="https://i.postimg.cc/xxxxx/farm.jpg">
+      <div class="settings-hint">ใช้เว็บฝากรูปฟรี เช่น postimages.org หรือ imgur.com อัปโหลดแล้วคัดลอก "Direct link" มาวาง — ทุกคนที่เปิดลิงก์แชร์ของคุณจะเห็นพื้นหลังเดียวกันนี้</div>
+    </div>
+
+    <div class="settings-field">
+      <label>หรืออัปโหลดรูปพื้นหลังของคุณเอง (เก็บแค่ในเครื่องนี้)</label>
+      <input type="file" id="cfgBgFile" accept="image/*">
+      <div class="settings-hint">รูปจะถูกจำไว้เฉพาะเบราว์เซอร์/เครื่องนี้เท่านั้น (ไฟล์ใหญ่เกิน ~3MB อาจบันทึกไม่ได้) — ถ้าใส่ลิงก์รูปด้านบนไว้ด้วย ลิงก์รูปจะถูกใช้ก่อนเสมอ</div>
+      <div id="bgPreviewWrap" style="display:none; margin-top:10px;">
+        <img id="bgPreview" style="width:100%; max-height:100px; object-fit:cover; border-radius:10px;">
+        <button type="button" id="btnRemoveBg" style="margin-top:8px; width:100%; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.3); background:transparent; color:#f0a; cursor:pointer;">ลบรูปพื้นหลัง กลับไปใช้ธีมสี</button>
+      </div>
     </div>
 
     <div class="settings-actions">
@@ -390,7 +406,8 @@ const DEFAULTS = {
   name: "สถานีสมาร์ทฟาร์มจำลอง วิทยาลัยเชียงราย",
   channel: "",
   read: "",
-  theme: "green"
+  theme: "green",
+  bgUrl: ""
 };
 
 function loadConfig(){
@@ -400,16 +417,32 @@ function loadConfig(){
     name: params.get("name") || saved.name || DEFAULTS.name,
     channel: params.get("channel") || saved.channel || DEFAULTS.channel,
     read: params.get("read") || saved.read || DEFAULTS.read,
-    theme: params.get("theme") || saved.theme || DEFAULTS.theme
+    theme: params.get("theme") || saved.theme || DEFAULTS.theme,
+    bgUrl: params.get("bgUrl") || saved.bgUrl || DEFAULTS.bgUrl
   };
 }
 
 let appConfig = loadConfig();
 
+const CUSTOM_BG_KEY = "smartFarmCustomBg";
+
+function getCustomBg(){
+  return localStorage.getItem(CUSTOM_BG_KEY);
+}
+
 function applyConfig(cfg){
   document.getElementById("stationTitle").innerText = "🌱 " + cfg.name;
-  document.body.style.background = THEMES[cfg.theme] || THEMES.green;
-  document.body.style.backgroundAttachment = "fixed";
+  const customBg = getCustomBg();
+  if(cfg.bgUrl){
+    document.body.style.background = `url('${cfg.bgUrl}') no-repeat center center fixed`;
+    document.body.style.backgroundSize = "cover";
+  } else if(customBg){
+    document.body.style.background = `url(${customBg}) no-repeat center center fixed`;
+    document.body.style.backgroundSize = "cover";
+  } else {
+    document.body.style.background = THEMES[cfg.theme] || THEMES.green;
+    document.body.style.backgroundAttachment = "fixed";
+  }
 }
 applyConfig(appConfig);
 
@@ -518,7 +551,52 @@ function fillFormFromConfig(){
   document.getElementById("cfgChannel").value = appConfig.channel;
   document.getElementById("cfgReadKey").value = appConfig.read;
   document.getElementById("cfgTheme").value = appConfig.theme;
+  document.getElementById("cfgBgUrl").value = appConfig.bgUrl || "";
+  const existingBg = getCustomBg();
+  const wrap = document.getElementById("bgPreviewWrap");
+  if(existingBg){
+    document.getElementById("bgPreview").src = existingBg;
+    wrap.style.display = "block";
+  } else {
+    wrap.style.display = "none";
+  }
 }
+
+document.getElementById("cfgBgUrl").addEventListener("input", (e) => {
+  const val = e.target.value.trim();
+  if(val){
+    document.body.style.background = `url('${val}') no-repeat center center fixed`;
+    document.body.style.backgroundSize = "cover";
+  } else {
+    applyConfig(appConfig);
+  }
+});
+
+document.getElementById("cfgBgFile").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      localStorage.setItem(CUSTOM_BG_KEY, reader.result);
+      document.getElementById("bgPreview").src = reader.result;
+      document.getElementById("bgPreviewWrap").style.display = "block";
+      applyConfig(appConfig);
+      copyMsg.innerText = "ตั้งรูปพื้นหลังแล้ว (เก็บไว้ในเครื่องนี้เท่านั้น)";
+    } catch(err){
+      copyMsg.innerText = "รูปใหญ่เกินไป บันทึกไม่ได้ ลองใช้รูปที่เล็กกว่านี้";
+    }
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById("btnRemoveBg").addEventListener("click", () => {
+  localStorage.removeItem(CUSTOM_BG_KEY);
+  document.getElementById("bgPreviewWrap").style.display = "none";
+  document.getElementById("cfgBgFile").value = "";
+  applyConfig(appConfig);
+  copyMsg.innerText = "ลบรูปพื้นหลังแล้ว กลับไปใช้ธีมสี";
+});
 
 function buildShareUrl(){
   const p = new URLSearchParams();
@@ -526,6 +604,8 @@ function buildShareUrl(){
   p.set("channel", document.getElementById("cfgChannel").value || DEFAULTS.channel);
   p.set("read", document.getElementById("cfgReadKey").value || DEFAULTS.read);
   p.set("theme", document.getElementById("cfgTheme").value || DEFAULTS.theme);
+  const bgUrlVal = document.getElementById("cfgBgUrl").value.trim();
+  if(bgUrlVal) p.set("bgUrl", bgUrlVal);
   return window.location.origin + window.location.pathname + "?" + p.toString();
 }
 
@@ -553,7 +633,8 @@ saveBtn.addEventListener("click", () => {
     name: document.getElementById("cfgName").value || DEFAULTS.name,
     channel: chVal,
     read: rdVal,
-    theme: document.getElementById("cfgTheme").value || DEFAULTS.theme
+    theme: document.getElementById("cfgTheme").value || DEFAULTS.theme,
+    bgUrl: document.getElementById("cfgBgUrl").value.trim()
   };
   localStorage.setItem("smartFarmConfig", JSON.stringify(newCfg));
   window.location.href = buildShareUrl();
