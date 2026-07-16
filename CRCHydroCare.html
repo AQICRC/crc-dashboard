@@ -223,13 +223,13 @@ body::before{
     <img src="crclogo.png" class="logo">
     <div class="station-name">💧 สถานีมอนิเตอร์ปั๊มน้ำ วิทยาลัยเชียงราย</div>
     <img src="CRC_Faculty-of-Engineering_Logo.png" class="header-logo">
-    <img src="Logo-DSD.png" class="header-logo">
+   
   </div>
 
   <div class="news-ticker">
     <div class="ticker-track">
-      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม (ไม่มีการควบคุมระยะไกล ใช้เพื่อเฝ้าระวังเท่านั้น) | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย ร่วมกับ กรมพัฒนาฝีมือแรงงาน 20 เชียงราย</div>
-      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม (ไม่มีการควบคุมระยะไกล ใช้เพื่อเฝ้าระวังเท่านั้น) | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย ร่วมกับ กรมพัฒนาฝีมือแรงงาน 20 เชียงราย</div>
+      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม  | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย </div>
+      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม  | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย </div>
     </div>
   </div>
 
@@ -257,7 +257,7 @@ body::before{
         <div class="device-icon" id="pumpIcon">🔧</div>
         <div class="status-badge" id="pumpStatus">รอข้อมูล...</div>
       </div>
-      <div class="small" id="pumpSourceNote" style="text-align:center;">อ่านจากหน้าคอนแทคช่วยของแมกเนติกคอนแทคเตอร์</div>
+      <div class="small" id="pumpSourceNote" style="text-align:center;"></div>
     </div>
 
     <div class="card">
@@ -266,7 +266,7 @@ body::before{
         <div class="device-icon" id="overloadIcon">🛡️</div>
         <div class="status-badge" id="overloadStatus">รอข้อมูล...</div>
       </div>
-      <div class="small" id="overloadSourceNote" style="text-align:center;">อ่านจากหน้าคอนแทคช่วยของโอเวอร์โหลดรีเลย์</div>
+      <div class="small" id="overloadSourceNote" style="text-align:center;"></div>
     </div>
 
     <div class="card card-wide">
@@ -291,8 +291,8 @@ body::before{
 /*
   ThingSpeak channel fields ที่ใช้ในหน้านี้:
   field1 = ระดับน้ำในแทงค์ (%) จาก JSN-SR04T
-  field2 = สถานะปั๊มทำงานจริง (1=ทำงาน / 0=หยุด) จากหน้าคอนแทคช่วยแมกเนติก
-  field3 = สถานะโอเวอร์โหลด (1=ทริป/ผิดปกติ / 0=ปกติ) จากหน้าคอนแทคช่วยโอเวอร์โหลด
+  field2 = สถานะปั๊มทำงานจริง (1=ทำงาน / 0=หยุด) 
+  field3 = สถานะโอเวอร์โหลด (1=ทริป/ผิดปกติ / 0=ปกติ) 
 */
 const channelID = "YOUR_CHANNEL_ID";
 const readApiKey = "YOUR_READ_API_KEY";
