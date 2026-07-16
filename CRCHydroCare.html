@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>สถานีมอนิเตอร์ปั๊มน้ำ</title>
+<title>สถานีมอนิเตอร์ปั๊มน้ำ (Preview)</title>
 <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -65,7 +65,6 @@ body::before{
 .ticker-text{ white-space:nowrap; padding-right:200px; font-size:26px; }
 @keyframes scrollLoop{ 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
 
-/* ---------- alert banner ---------- */
 .alert-banner{
   display:none;
   align-items:center;
@@ -109,7 +108,6 @@ body::before{
 .big{ font-size:64px; font-weight:700; line-height:1; }
 .small{ font-size:20px; opacity:0.9; }
 
-/* ---------- water tank graphic ---------- */
 .tank-wrap{
   display:flex;
   align-items:center;
@@ -142,7 +140,6 @@ body::before{
 .tank-percent{ font-size:56px; font-weight:800; }
 .tank-status-text{ font-size:20px; margin-top:6px; opacity:0.9; }
 
-/* ---------- device status ---------- */
 .device{
   display:flex;
   flex-direction:column;
@@ -180,8 +177,12 @@ body::before{
   backdrop-filter:blur(10px);
 }
 .credit-text{ font-size:16px; font-weight:700; white-space:nowrap; }
+.preview-tag{
+  position:fixed; top:16px; right:24px; z-index:5;
+  background:rgba(255,193,7,0.9); color:#412402; font-weight:800;
+  padding:8px 20px; border-radius:30px; font-size:16px;
+}
 
-/* ============ TABLET / iPAD (<=1024px) ============ */
 @media(max-width:1024px){
   body{ overflow:auto; }
   .header{ flex-wrap:wrap; }
@@ -190,7 +191,6 @@ body::before{
   .big{ font-size:48px; }
 }
 
-/* ============ MOBILE (<=760px) ============ */
 @media(max-width:760px){
   .grid{ grid-template-columns:1fr; }
   .card-wide{ grid-column:span 1; }
@@ -202,7 +202,6 @@ body::before{
   .alert-banner{ font-size:18px; }
 }
 
-/* ============ SMALL PHONE (<=420px) ============ */
 @media(max-width:420px){
   .container{ padding:16px; }
   .logo, .header-logo{ width:72px; }
@@ -217,19 +216,20 @@ body::before{
 </head>
 <body>
 
+<div class="preview-tag">PREVIEW - ข้อมูลจำลอง</div>
+
 <div class="container">
 
   <div class="header">
     <img src="crclogo.png" class="logo">
     <div class="station-name">💧 สถานีมอนิเตอร์ปั๊มน้ำ วิทยาลัยเชียงราย</div>
     <img src="CRC_Faculty-of-Engineering_Logo.png" class="header-logo">
-   
   </div>
 
   <div class="news-ticker">
     <div class="ticker-track">
-      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม  | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย </div>
-      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม  | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย </div>
+      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย </div>
+      <div class="ticker-text">💧 ระบบมอนิเตอร์ระดับน้ำและสถานะปั๊ม | พัฒนาโดย คณะวิศวกรรมศาสตร์ วิทยาลัยเชียงราย </div>
     </div>
   </div>
 
@@ -289,15 +289,21 @@ body::before{
 
 <script>
 /*
-  ThingSpeak channel fields ที่ใช้ในหน้านี้:
-  field1 = ระดับน้ำในแทงค์ (%) จาก JSN-SR04T
-  field2 = สถานะปั๊มทำงานจริง (1=ทำงาน / 0=หยุด) 
-  field3 = สถานะโอเวอร์โหลด (1=ทริป/ผิดปกติ / 0=ปกติ) 
+  ไฟล์นี้เป็นเวอร์ชัน PREVIEW เท่านั้น ใช้ค่าจำลองแทนการดึงจาก ThingSpeak จริง
+  เพื่อดูหน้าตาการแสดงผลตามสถานการณ์ที่กำหนด:
+  - น้ำครึ่งถัง (50%)
+  - ปั๊มทำงานอยู่ (ON)
+  - โอเวอร์โหลดปกติ (NORMAL)
 */
-const channelID = "YOUR_CHANNEL_ID";
-const readApiKey = "YOUR_READ_API_KEY";
 const WATER_LOW_PERCENT = 20;
 const WATER_HIGH_PERCENT = 70;
+
+// ---------- ค่าจำลอง (mock data) แก้ตรงนี้เพื่อลองสถานการณ์อื่น ----------
+const MOCK = {
+  waterLevel: 50,   // %
+  pumpRunning: 1,   // 1 = ทำงาน, 0 = หยุด
+  overloadTrip: 0   // 1 = ทริป, 0 = ปกติ
+};
 
 function updateDateTime(){
   const now = new Date();
@@ -318,78 +324,55 @@ function hideAlert(){
   document.getElementById("alertBanner").classList.remove("show");
 }
 
-function loadData(){
-  fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json?api_key=${readApiKey}`)
-    .then(res => res.json())
-    .then(data => {
-      const waterLevel = parseFloat(data.field1);
-      const pumpRunning = parseInt(data.field2);
-      const overloadTrip = parseInt(data.field3);
+function renderMockData(){
+  const waterLevel = MOCK.waterLevel;
+  const pumpRunning = MOCK.pumpRunning;
+  const overloadTrip = MOCK.overloadTrip;
 
-      // ---------- water tank ----------
-      const lvl = isNaN(waterLevel) ? 0 : Math.max(0, Math.min(100, waterLevel));
-      document.getElementById("tankPercent").innerText = isNaN(waterLevel) ? "-- %" : lvl.toFixed(0) + " %";
-      document.getElementById("tankFill").style.height = lvl + "%";
+  const lvl = Math.max(0, Math.min(100, waterLevel));
+  document.getElementById("tankPercent").innerText = lvl.toFixed(0) + " %";
+  document.getElementById("tankFill").style.height = lvl + "%";
 
-      let tankText = "";
-      if(lvl < WATER_LOW_PERCENT) tankText = "🔴 น้ำต่ำ - ควรตรวจสอบ";
-      else if(lvl > WATER_HIGH_PERCENT) tankText = "🔵 ระดับน้ำเพียงพอ";
-      else tankText = "⚪ ระดับปานกลาง";
-      document.getElementById("tankStatusText").innerText = tankText;
+  let tankText = "";
+  if(lvl < WATER_LOW_PERCENT) tankText = "🔴 น้ำต่ำ - ควรตรวจสอบ";
+  else if(lvl > WATER_HIGH_PERCENT) tankText = "🔵 ระดับน้ำเพียงพอ";
+  else tankText = "⚪ ระดับปานกลาง";
+  document.getElementById("tankStatusText").innerText = tankText;
 
-      // ---------- pump running (switch-style, no control) ----------
-      const pumpEl = document.getElementById("pumpStatus");
-      const pumpIcon = document.getElementById("pumpIcon");
-      pumpIcon.classList.remove("spin");
-      if(!isNaN(pumpRunning)){
-        if(pumpRunning === 1){
-          pumpEl.textContent = "ปั๊มทำงานอยู่ (ON)";
-          pumpEl.className = "status-badge status-on";
-          pumpIcon.classList.add("spin");
-        } else {
-          pumpEl.textContent = "ปั๊มหยุดทำงาน (OFF)";
-          pumpEl.className = "status-badge status-off";
-        }
-      } else {
-        pumpEl.textContent = "ไม่มีข้อมูลเซนเซอร์";
-        pumpEl.className = "status-badge status-na";
-      }
+  const pumpEl = document.getElementById("pumpStatus");
+  const pumpIcon = document.getElementById("pumpIcon");
+  pumpIcon.classList.remove("spin");
+  if(pumpRunning === 1){
+    pumpEl.textContent = "ปั๊มทำงานอยู่ (ON)";
+    pumpEl.className = "status-badge status-on";
+    pumpIcon.classList.add("spin");
+  } else {
+    pumpEl.textContent = "ปั๊มหยุดทำงาน (OFF)";
+    pumpEl.className = "status-badge status-off";
+  }
 
-      // ---------- overload (switch-style, no control) ----------
-      const olEl = document.getElementById("overloadStatus");
-      if(!isNaN(overloadTrip)){
-        if(overloadTrip === 1){
-          olEl.textContent = "โอเวอร์โหลดทริป (TRIP)";
-          olEl.className = "status-badge status-trip";
-        } else {
-          olEl.textContent = "ปกติ (NORMAL)";
-          olEl.className = "status-badge status-normal";
-        }
-      } else {
-        olEl.textContent = "ไม่มีข้อมูลเซนเซอร์";
-        olEl.className = "status-badge status-na";
-      }
+  const olEl = document.getElementById("overloadStatus");
+  if(overloadTrip === 1){
+    olEl.textContent = "โอเวอร์โหลดทริป (TRIP)";
+    olEl.className = "status-badge status-trip";
+  } else {
+    olEl.textContent = "ปกติ (NORMAL)";
+    olEl.className = "status-badge status-normal";
+  }
 
-      // ---------- alert banner logic ----------
-      if(overloadTrip === 1){
-        showAlert("🚨 ปั๊มโอเวอร์โหลดทริป - แจ้งช่างซ่อมบำรุงด่วน");
-      } else if(!isNaN(waterLevel) && lvl < WATER_LOW_PERCENT){
-        showAlert("⚠️ ระดับน้ำในแทงค์ต่ำกว่า " + WATER_LOW_PERCENT + "%");
-      } else {
-        hideAlert();
-      }
+  if(overloadTrip === 1){
+    showAlert("🚨 ปั๊มโอเวอร์โหลดทริป - แจ้งช่างซ่อมบำรุงด่วน");
+  } else if(lvl < WATER_LOW_PERCENT){
+    showAlert("⚠️ ระดับน้ำในแทงค์ต่ำกว่า " + WATER_LOW_PERCENT + "%");
+  } else {
+    hideAlert();
+  }
 
-      document.getElementById("lastUpdate").innerText =
-        "อัปเดตล่าสุด: " + new Date().toLocaleTimeString("th-TH");
-    })
-    .catch(err => {
-      console.error("โหลดข้อมูลจาก ThingSpeak ไม่สำเร็จ:", err);
-      document.getElementById("lastUpdate").innerText = "เชื่อมต่อ ThingSpeak ไม่สำเร็จ";
-    });
+  document.getElementById("lastUpdate").innerText =
+    "อัปเดตล่าสุด (จำลอง): " + new Date().toLocaleTimeString("th-TH");
 }
 
-loadData();
-setInterval(loadData, 15000);
+renderMockData();
 </script>
 </body>
 </html>
