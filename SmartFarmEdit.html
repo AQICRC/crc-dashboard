@@ -432,6 +432,7 @@ body{
     <div class="settings-actions">
       <button class="btn-save" id="btnSaveCfg">บันทึก</button>
       <button class="btn-copy" id="btnCopyLink">คัดลอกลิงก์</button>
+      <button class="btn-copy" id="btnShowQR">📱 QR Code</button>
       <button class="btn-close" id="btnCloseCfg">ปิด</button>
     </div>
     <div class="settings-hint" id="copyMsg" style="margin-top:10px;"></div>
@@ -448,6 +449,20 @@ body{
       <canvas id="historyChartCanvas"></canvas>
     </div>
     <div class="chart-loading-text" id="chartLoadingText">กำลังโหลดข้อมูล...</div>
+  </div>
+</div>
+
+<div class="chart-overlay" id="qrOverlay">
+  <div class="chart-panel" style="width:340px; text-align:center;">
+    <div class="chart-panel-header">
+      <h3>📱 สแกนเพื่อเปิดแดชบอร์ดนี้</h3>
+      <button class="chart-close-btn" id="btnCloseQR">✕</button>
+    </div>
+    <div style="background:white; padding:16px; border-radius:14px; display:inline-block;">
+      <img id="qrImage" src="" alt="QR Code" style="width:260px; height:260px; display:block;">
+    </div>
+    <div class="settings-hint" style="margin-top:12px;">สแกนด้วยกล้องมือถือเพื่อเปิดลิงก์นี้โดยตรง</div>
+    <button type="button" id="btnDownloadQR" style="margin-top:14px; width:100%; padding:10px; border-radius:10px; border:none; background:#1d9e75; color:white; font-weight:700; cursor:pointer;">⬇️ บันทึกรูป QR</button>
   </div>
 </div>
 
@@ -834,6 +849,33 @@ copyBtn.addEventListener("click", () => {
   }).catch(() => {
     copyMsg.innerText = url;
   });
+});
+
+/* ================= QR CODE FEATURE ================= */
+const qrOverlay = document.getElementById("qrOverlay");
+const btnShowQR = document.getElementById("btnShowQR");
+const btnCloseQR = document.getElementById("btnCloseQR");
+const qrImage = document.getElementById("qrImage");
+const btnDownloadQR = document.getElementById("btnDownloadQR");
+
+btnShowQR.addEventListener("click", () => {
+  const url = buildShareUrl();
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(url)}`;
+  qrImage.src = qrApiUrl;
+  qrOverlay.classList.add("open");
+});
+
+btnCloseQR.addEventListener("click", () => qrOverlay.classList.remove("open"));
+qrOverlay.addEventListener("click", (e) => { if(e.target === qrOverlay) qrOverlay.classList.remove("open"); });
+
+btnDownloadQR.addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.href = qrImage.src;
+  link.download = "smartfarm-qrcode.png";
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 });
 </script>
 </body>
