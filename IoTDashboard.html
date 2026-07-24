@@ -391,8 +391,7 @@ function generateSlug(){
 }
 function buildPublicUrl(slug){
   let base = window.location.href.split("?")[0].split("#")[0];
-  base = base.replace(/index\.html$/, "");
-  if(!base.endsWith("/")) base += "/";
+  base = base.replace(/[^\/]*$/, "");
   return base + "public_view.html?u=" + slug;
 }
 function escapeHtml(s){
