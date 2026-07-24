@@ -771,9 +771,9 @@ function loadData(){
 fetch(`https://api.thingspeak.com/channels/${channelID}/feeds/last.json`)
 .then(res=>res.json())
 .then(data=>{
-let temp = (parseFloat(data.field1) - 1).toFixed(0);
+let temp = (parseFloat(data.field1) - 2).toFixed(0);
 let humidity = parseFloat(data.field2).toFixed(0);
-let pm25 = 10;
+let pm25 = 8;
 let pm10 = 13;
 
 document.getElementById("temp").innerText=temp+" °C";
