@@ -20,13 +20,14 @@
   --accent-2:#35e0a1;
   --accent-2-soft:rgba(53,224,161,0.14);
   --danger:#ff5c5c;
-  --text-dim:rgba(255,255,255,0.62);
-  --text-dimmer:rgba(255,255,255,0.38);
+  --text-color:#f2f3f5;
+  --text-dim:color-mix(in srgb, var(--text-color) 62%, transparent);
+  --text-dimmer:color-mix(in srgb, var(--text-color) 38%, transparent);
 }
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{
-  margin:0; min-height:100vh; font-family:'IBM Plex Sans Thai', sans-serif; color:#f2f3f5;
+  margin:0; min-height:100vh; font-family:'IBM Plex Sans Thai', sans-serif; color:var(--text-color);
   background:linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); background-attachment:fixed; position:relative;
 }
 body::after{
@@ -98,7 +99,7 @@ button{ font-family:inherit; }
 @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.25;} }
 .header-right{ display:flex; align-items:center; gap:10px; }
 .user-chip{ background:var(--panel); border:1px solid var(--border); padding:8px 16px; border-radius:20px; font-size:13px; display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; }
-.icon-btn{ width:42px; height:42px; border-radius:10px; border:1px solid var(--border); background:var(--panel); color:white; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.icon-btn{ width:42px; height:42px; border-radius:10px; border:1px solid var(--border); background:var(--panel); color:var(--text-color); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .icon-btn:hover{ background:var(--panel-strong); }
 .icon-btn.active{ background:var(--accent); border-color:var(--accent); color:#1a1206; }
 
@@ -145,7 +146,7 @@ button{ font-family:inherit; }
 
 .chart-trigger{
   position:absolute; bottom:10px; right:10px; width:32px; height:32px; border-radius:8px;
-  background:var(--panel); border:1px solid var(--border); color:white; font-size:13px; cursor:pointer;
+  background:var(--panel); border:1px solid var(--border); color:var(--text-color); font-size:13px; cursor:pointer;
   display:flex; align-items:center; justify-content:center; transition:0.2s; z-index:2;
 }
 .chart-trigger:hover{ background:var(--panel-strong); }
@@ -344,6 +345,15 @@ button{ font-family:inherit; }
         <label>หรืออัปโหลดรูปพื้นหลังของคุณเอง</label>
         <input type="file" id="cfgBgFile" accept="image/*">
         <div class="settings-hint" id="bgUploadStatus">ไฟล์จะถูกเก็บใน Supabase Storage ของโปรเจกต์คุณ (ดูขั้นตอนเปิดใช้ที่ SETUP_GUIDE.md)</div>
+      </div>
+      <div class="settings-field">
+        <label>สีตัวอักษรหน้าแดชบอร์ด</label>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="color" id="cfgTextColor" style="width:52px; height:40px; padding:2px; cursor:pointer;">
+          <button type="button" class="btn btn-ghost" id="btnTextColorLight" style="flex:1;">☀️ สว่าง</button>
+          <button type="button" class="btn btn-ghost" id="btnTextColorDark" style="flex:1;">🌙 เข้ม</button>
+        </div>
+        <div class="settings-hint">ถ้ารูปพื้นหลังโทนสว่าง ตัวอักษรสีขาวจะอ่านยาก — ปรับเป็นสีเข้มแทนได้ที่นี่</div>
       </div>
       <div class="danger-zone">
         <button type="button" class="btn btn-danger" id="btnDeleteProject" style="width:100%;">🗑 ลบโปรเจกต์นี้</button>
@@ -635,6 +645,7 @@ function initApp(){
       name: name || "โปรเจกต์ของฉัน",
       theme: "green",
       background_url: "",
+      text_color: "#f2f3f5",
       thingspeak_channel: "",
       thingspeak_read_key: "",
       fields: JSON.parse(JSON.stringify(DEFAULT_FIELDS)),
@@ -664,6 +675,7 @@ function initApp(){
             name: row.station_name || "โปรเจกต์ของฉัน",
             theme: row.theme || "green",
             background_url: row.background_url || "",
+            text_color: row.text_color || "#f2f3f5",
             thingspeak_channel: row.thingspeak_channel || "",
             thingspeak_read_key: row.thingspeak_read_key || "",
             fields: (row.fields && row.fields.length) ? row.fields : JSON.parse(JSON.stringify(DEFAULT_FIELDS)),
@@ -768,6 +780,7 @@ function initApp(){
 
   function applyTheme(){
     document.getElementById("stationTitle").innerText = dashboard.name || "แดชบอร์ดของฉัน";
+    document.documentElement.style.setProperty("--text-color", dashboard.text_color || "#f2f3f5");
     if(dashboard.background_url){
       document.body.style.background = `url('${dashboard.background_url}') no-repeat center center fixed`;
       document.body.style.backgroundSize = "cover";
@@ -1165,6 +1178,7 @@ function initApp(){
     document.getElementById("cfgName").value = dashboard.name || "";
     document.getElementById("cfgTheme").value = dashboard.theme || "green";
     document.getElementById("cfgBgUrl").value = dashboard.background_url || "";
+    document.getElementById("cfgTextColor").value = dashboard.text_color || "#f2f3f5";
     document.getElementById("bgUploadStatus").innerText = "ไฟล์จะถูกเก็บใน Supabase Storage ของโปรเจกต์คุณ (ดูขั้นตอนเปิดใช้ที่ SETUP_GUIDE.md)";
     document.getElementById("cfgChannel").value = dashboard.thingspeak_channel || "";
     document.getElementById("cfgReadKey").value = dashboard.thingspeak_read_key || "";
@@ -1205,6 +1219,18 @@ function initApp(){
     if(!document.getElementById("cfgBgUrl").value.trim()){
       document.body.style.background = THEMES[e.target.value] || THEMES.green;
     }
+  });
+
+  document.getElementById("cfgTextColor").addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--text-color", e.target.value);
+  });
+  document.getElementById("btnTextColorLight").addEventListener("click", () => {
+    document.getElementById("cfgTextColor").value = "#f2f3f5";
+    document.documentElement.style.setProperty("--text-color", "#f2f3f5");
+  });
+  document.getElementById("btnTextColorDark").addEventListener("click", () => {
+    document.getElementById("cfgTextColor").value = "#141414";
+    document.documentElement.style.setProperty("--text-color", "#141414");
   });
 
   /* ---- background upload to Supabase Storage ---- */
@@ -1354,6 +1380,7 @@ function initApp(){
       name: document.getElementById("cfgName").value.trim() || "โปรเจกต์ของฉัน",
       theme: document.getElementById("cfgTheme").value,
       background_url: document.getElementById("cfgBgUrl").value.trim(),
+      text_color: document.getElementById("cfgTextColor").value,
       thingspeak_channel: document.getElementById("cfgChannel").value.trim(),
       thingspeak_read_key: document.getElementById("cfgReadKey").value.trim(),
       fields: fieldsDraft,
