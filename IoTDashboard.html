@@ -54,7 +54,8 @@ button{ font-family:inherit; }
   border:1px solid var(--border); border-radius:14px; padding:22px;
   display:flex; flex-direction:column; position:relative; overflow:hidden; min-width:0; min-height:0;
 }
-.card::before, .card::after{ content:""; position:absolute; width:14px; height:14px; border-color:var(--accent); border-style:solid; opacity:0.6; pointer-events:none; }
+.card::before, .card::after{ content:""; position:absolute; width:14px; height:14px; border-color:var(--accent); border-style:solid; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.grid.edit-mode .card::before, .grid.edit-mode .card::after{ opacity:0.6; }
 .card::before{ top:8px; left:8px; border-width:2px 0 0 2px; }
 .card::after{ bottom:8px; right:8px; border-width:0 2px 2px 0; }
 
@@ -76,6 +77,7 @@ button{ font-family:inherit; }
 }
 .field-group input::placeholder{ color:rgba(255,255,255,0.35); }
 .btn{ padding:13px 20px; border-radius:9px; border:none; font-weight:700; font-size:14px; cursor:pointer; transition:0.15s; font-family:inherit; }
+.btn:disabled{ opacity:0.4; cursor:not-allowed; }
 .btn:active{ transform:scale(0.98); }
 .btn-primary{ background:var(--accent); color:#1a1206; width:100%; }
 .btn-primary:hover{ background:#ffc257; }
@@ -419,6 +421,30 @@ button{ font-family:inherit; }
 </div>
 
 <!-- ============== NEW PROJECT MODAL ============== -->
+<!-- ============== TERMS OF SERVICE MODAL (signup gate) ============== -->
+<div class="overlay" id="termsOverlay">
+  <div class="panel" style="width:520px;">
+    <h3>📋 ข้อตกลงการใช้งาน</h3>
+    <p class="panel-sub">กรุณาอ่านและยอมรับข้อตกลงก่อนสมัครสมาชิก</p>
+    <div style="max-height:280px; overflow-y:auto; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; padding:16px; font-size:13px; line-height:1.8; opacity:0.85;">
+      <p><em>(ข้อความฉบับนี้เป็นฉบับร่างชั่วคราว เจ้าของเว็บไซต์จะปรับปรุงเนื้อหาข้อตกลงฉบับเต็มในภายหลัง)</em></p>
+      <p>ยินดีต้อนรับสู่ IoT Dashboard การสมัครสมาชิกและใช้งานระบบนี้ถือว่าคุณรับทราบและยอมรับเงื่อนไขต่อไปนี้:</p>
+      <p>1. ข้อมูลที่คุณกรอก (เช่น ThingSpeak Channel ID, API Key) จะถูกเก็บไว้ในบัญชีของคุณเพื่อใช้แสดงผลแดชบอร์ดเท่านั้น</p>
+      <p>2. คุณเป็นผู้รับผิดชอบต่อความถูกต้องและความปลอดภัยของข้อมูลที่นำเข้าสู่ระบบด้วยตนเอง</p>
+      <p>3. หากเปิดใช้งานฟีเจอร์แชร์แบบสาธารณะ คุณรับทราบว่าผู้อื่นที่มีลิงก์จะสามารถเข้าถึงข้อมูลที่แสดงในหน้านั้นได้</p>
+      <p>4. ผู้ให้บริการขอสงวนสิทธิ์ในการปรับปรุง แก้ไข หรือระงับการให้บริการได้ตามความเหมาะสม</p>
+      <p style="opacity:0.6;">— รายละเอียดฉบับเต็มจะประกาศให้ทราบภายหลัง —</p>
+    </div>
+    <div class="settings-field" style="margin-top:16px;">
+      <label class="checkbox-row"><input type="checkbox" id="termsAcceptCheckbox"> ฉันได้อ่านและยอมรับข้อตกลงการใช้งานแล้ว</label>
+    </div>
+    <div class="settings-actions">
+      <button class="btn btn-primary" id="btnAcceptTerms" disabled>ยอมรับและสมัครสมาชิก</button>
+      <button class="btn btn-ghost" id="btnDeclineTerms">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="newProjectOverlay">
   <div class="panel" style="width:420px;">
     <h3>➕ โปรเจกต์ใหม่</h3>
@@ -559,29 +585,67 @@ function initApp(){
   tabLogin.addEventListener("click", () => setAuthMode("login"));
   tabSignup.addEventListener("click", () => setAuthMode("signup"));
 
+  let pendingSignup = null;
+
   document.getElementById("authForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("authEmail").value.trim();
     const password = document.getElementById("authPassword").value;
+
+    if(authMode === "signup"){
+      pendingSignup = { email, password };
+      document.getElementById("termsAcceptCheckbox").checked = false;
+      document.getElementById("btnAcceptTerms").disabled = true;
+      termsOverlay.classList.add("open");
+      return;
+    }
+
     authMsg.innerText = "กำลังดำเนินการ...";
     authMsg.className = "auth-msg";
     authSubmitBtn.disabled = true;
     try{
-      if(authMode === "login"){
-        const { error } = await sb.auth.signInWithPassword({ email, password });
-        if(error) throw error;
-      } else {
-        const { error } = await sb.auth.signUp({ email, password });
-        if(error) throw error;
-        authMsg.innerText = "สมัครสำเร็จ! ถ้าระบบเปิดใช้การยืนยันอีเมล กรุณาเช็กอีเมลของคุณ แล้วลองเข้าสู่ระบบอีกครั้ง";
-        authMsg.className = "auth-msg ok";
-        authSubmitBtn.disabled = false;
-        return;
-      }
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw error;
     } catch(err){
       authMsg.innerText = translateAuthError(err.message);
       authMsg.className = "auth-msg error";
       authSubmitBtn.disabled = false;
+    }
+  });
+
+  const termsOverlay = document.getElementById("termsOverlay");
+  const termsCheckbox = document.getElementById("termsAcceptCheckbox");
+  const btnAcceptTerms = document.getElementById("btnAcceptTerms");
+
+  termsCheckbox.addEventListener("change", () => {
+    btnAcceptTerms.disabled = !termsCheckbox.checked;
+  });
+
+  document.getElementById("btnDeclineTerms").addEventListener("click", () => {
+    termsOverlay.classList.remove("open");
+    pendingSignup = null;
+  });
+  termsOverlay.addEventListener("click", (e) => {
+    if(e.target === termsOverlay){ termsOverlay.classList.remove("open"); pendingSignup = null; }
+  });
+
+  btnAcceptTerms.addEventListener("click", async () => {
+    if(!pendingSignup) return;
+    termsOverlay.classList.remove("open");
+    authMsg.innerText = "กำลังดำเนินการ...";
+    authMsg.className = "auth-msg";
+    authSubmitBtn.disabled = true;
+    try{
+      const { error } = await sb.auth.signUp({ email: pendingSignup.email, password: pendingSignup.password });
+      if(error) throw error;
+      authMsg.innerText = "สมัครสำเร็จ! ถ้าระบบเปิดใช้การยืนยันอีเมล กรุณาเช็กอีเมลของคุณ แล้วลองเข้าสู่ระบบอีกครั้ง";
+      authMsg.className = "auth-msg ok";
+    } catch(err){
+      authMsg.innerText = translateAuthError(err.message);
+      authMsg.className = "auth-msg error";
+    } finally {
+      authSubmitBtn.disabled = false;
+      pendingSignup = null;
     }
   });
 
