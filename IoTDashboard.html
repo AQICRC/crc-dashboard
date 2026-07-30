@@ -274,6 +274,10 @@ button{ font-family:inherit; }
         <label>รหัสผ่าน</label>
         <input type="password" id="authPassword" placeholder="อย่างน้อย 6 ตัวอักษร" minlength="6" required>
       </div>
+      <div class="field-group hidden" id="passwordConfirmGroup">
+        <label>ยืนยันรหัสผ่าน</label>
+        <input type="password" id="authPasswordConfirm" placeholder="พิมพ์รหัสผ่านอีกครั้ง" minlength="6">
+      </div>
       <button type="submit" class="btn btn-primary" id="authSubmitBtn">เข้าสู่ระบบ</button>
     </form>
     <div class="auth-forgot" id="forgotLink">ลืมรหัสผ่าน?</div>
@@ -581,6 +585,11 @@ function initApp(){
     authSubmitBtn.innerText = mode === "login" ? "เข้าสู่ระบบ" : "สมัครสมาชิก";
     authMsg.innerText = "";
     authMsg.className = "auth-msg";
+    const confirmGroup = document.getElementById("passwordConfirmGroup");
+    const confirmInput = document.getElementById("authPasswordConfirm");
+    confirmGroup.classList.toggle("hidden", mode !== "signup");
+    confirmInput.required = mode === "signup";
+    confirmInput.value = "";
   }
   tabLogin.addEventListener("click", () => setAuthMode("login"));
   tabSignup.addEventListener("click", () => setAuthMode("signup"));
@@ -593,6 +602,12 @@ function initApp(){
     const password = document.getElementById("authPassword").value;
 
     if(authMode === "signup"){
+      const passwordConfirm = document.getElementById("authPasswordConfirm").value;
+      if(password !== passwordConfirm){
+        authMsg.innerText = "รหัสผ่านทั้งสองช่องไม่ตรงกัน กรุณาลองใหม่";
+        authMsg.className = "auth-msg error";
+        return;
+      }
       pendingSignup = { email, password };
       document.getElementById("termsAcceptCheckbox").checked = false;
       document.getElementById("btnAcceptTerms").disabled = true;
