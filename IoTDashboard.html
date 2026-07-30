@@ -26,17 +26,11 @@
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{
-  margin:0;
-  min-height:100vh;
-  font-family:'IBM Plex Sans Thai', sans-serif;
-  color:#f2f3f5;
-  background:linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
-  background-attachment:fixed;
-  position:relative;
+  margin:0; min-height:100vh; font-family:'IBM Plex Sans Thai', sans-serif; color:#f2f3f5;
+  background:linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); background-attachment:fixed; position:relative;
 }
 body::after{
-  content:"";
-  position:fixed; inset:0;
+  content:""; position:fixed; inset:0;
   background:
     radial-gradient(760px 560px at 12% 8%, rgba(53,224,161,0.16), transparent 62%),
     radial-gradient(820px 620px at 88% 12%, rgba(255,176,32,0.14), transparent 62%),
@@ -48,38 +42,26 @@ button{ font-family:inherit; }
 .hidden{ display:none !important; }
 .mono{ font-family:'IBM Plex Mono', monospace; }
 
-/* ---------------- layout shells ---------------- */
-.container{ max-width:1500px; margin:auto; padding:40px; position:relative; z-index:2; }
+.container{ max-width:1600px; margin:auto; padding:40px; position:relative; z-index:2; }
 .center-screen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; position:relative; z-index:2; }
 
-/* ---------------- panel base (modals, auth box) ---------------- */
-.panel-surface{
-  background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-  border:1px solid var(--border);
-  border-radius:16px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.55);
-}
+.panel-surface{ background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid var(--border); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.55); }
 
-/* ---------------- HUD card w/ corner brackets ---------------- */
+/* ---------------- HUD card ---------------- */
 .card{
   background:linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:26px;
-  min-height:200px;
-  display:flex; flex-direction:column; justify-content:space-between;
-  position:relative;
+  border:1px solid var(--border); border-radius:14px; padding:22px;
+  display:flex; flex-direction:column; position:relative; overflow:hidden; min-width:0; min-height:0;
 }
-.card::before, .card::after{
-  content:""; position:absolute; width:14px; height:14px;
-  border-color:var(--accent); border-style:solid; opacity:0.6; pointer-events:none;
-}
+.card::before, .card::after{ content:""; position:absolute; width:14px; height:14px; border-color:var(--accent); border-style:solid; opacity:0.6; pointer-events:none; }
 .card::before{ top:8px; left:8px; border-width:2px 0 0 2px; }
 .card::after{ bottom:8px; right:8px; border-width:0 2px 2px 0; }
 
 /* ---------------- auth screen ---------------- */
 .auth-box{ width:420px; max-width:100%; padding:40px 36px; }
-.auth-logo{ text-align:center; font-size:38px; margin-bottom:10px; }
+.auth-logo{ text-align:center; margin-bottom:10px; }
+.auth-logo-badge{ background:#fff; border-radius:12px; padding:12px 18px; display:inline-flex; margin:0 auto 12px; box-shadow:0 6px 18px rgba(0,0,0,0.4); line-height:0; }
+.auth-logo-badge img{ height:42px; width:auto; display:block; }
 .auth-title{ text-align:center; font-size:24px; font-weight:700; margin:0 0 4px; }
 .auth-sub{ text-align:center; font-size:12px; opacity:0.55; margin:0 0 26px; text-transform:uppercase; letter-spacing:0.09em; font-family:'IBM Plex Mono',monospace; }
 .auth-tabs{ display:flex; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; padding:4px; margin-bottom:22px; }
@@ -88,8 +70,7 @@ button{ font-family:inherit; }
 .field-group{ margin-bottom:14px; }
 .field-group label{ display:block; font-size:12px; margin-bottom:6px; opacity:0.6; text-transform:uppercase; letter-spacing:0.06em; }
 .field-group input, .field-group select{
-  width:100%; padding:12px 14px; border-radius:9px;
-  border:1px solid var(--border);
+  width:100%; padding:12px 14px; border-radius:9px; border:1px solid var(--border);
   background:rgba(255,255,255,0.03); color:white; font-size:15px; font-family:inherit;
 }
 .field-group input::placeholder{ color:rgba(255,255,255,0.35); }
@@ -99,18 +80,18 @@ button{ font-family:inherit; }
 .btn-primary:hover{ background:#ffc257; }
 .btn-ghost{ background:rgba(255,255,255,0.06); color:white; border:1px solid var(--border); }
 .btn-ghost:hover{ background:rgba(255,255,255,0.1); }
+.btn-danger{ background:rgba(255,92,92,0.15); color:#ff9a9a; border:1px solid rgba(255,92,92,0.4); }
+.btn-danger:hover{ background:rgba(255,92,92,0.28); }
 .auth-msg{ font-size:13px; margin-top:14px; text-align:center; min-height:18px; }
 .auth-msg.error{ color:var(--danger); }
 .auth-msg.ok{ color:var(--accent-2); }
 .auth-forgot{ text-align:center; margin-top:14px; font-size:13px; opacity:0.55; cursor:pointer; text-decoration:underline; }
 
 /* ---------------- header ---------------- */
-.header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+.header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
 .header-left{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
 .brand-badge{ background:#fff; border-radius:9px; padding:5px 10px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(0,0,0,0.35); line-height:0; }
 .brand-badge img{ height:26px; width:auto; display:block; }
-.auth-logo-badge{ background:#fff; border-radius:12px; padding:12px 18px; display:inline-flex; margin:0 auto 12px; box-shadow:0 6px 18px rgba(0,0,0,0.4); line-height:0; }
-.auth-logo-badge img{ height:42px; width:auto; display:block; }
 .station-name{ font-size:22px; font-weight:700; background:var(--panel); border:1px solid var(--border); padding:10px 20px; border-radius:10px; }
 .live-chip{ display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.09em; color:var(--accent-2); background:var(--accent-2-soft); border:1px solid rgba(53,224,161,0.35); padding:7px 12px; border-radius:20px; text-transform:uppercase; }
 .live-dot{ width:7px; height:7px; border-radius:50%; background:var(--accent-2); box-shadow:0 0 8px 2px rgba(53,224,161,0.7); animation:blink 1.8s ease-in-out infinite; }
@@ -119,6 +100,15 @@ button{ font-family:inherit; }
 .user-chip{ background:var(--panel); border:1px solid var(--border); padding:8px 16px; border-radius:20px; font-size:13px; display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; }
 .icon-btn{ width:42px; height:42px; border-radius:10px; border:1px solid var(--border); background:var(--panel); color:white; font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .icon-btn:hover{ background:var(--panel-strong); }
+.icon-btn.active{ background:var(--accent); border-color:var(--accent); color:#1a1206; }
+
+/* ---------------- project tabs ---------------- */
+.project-bar{ display:flex; align-items:center; gap:8px; margin-bottom:18px; overflow-x:auto; padding-bottom:6px; }
+.project-tab{ flex:0 0 auto; padding:9px 18px; border-radius:9px; background:var(--panel); border:1px solid var(--border); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; opacity:0.65; transition:0.15s; }
+.project-tab:hover{ opacity:0.9; }
+.project-tab.active{ background:var(--accent); color:#1a1206; opacity:1; border-color:var(--accent); }
+.project-tab-add{ flex:0 0 auto; width:38px; height:38px; border-radius:9px; background:transparent; border:1.5px dashed var(--border); color:var(--accent); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.project-tab-add:hover{ border-color:var(--accent); background:var(--accent-soft); }
 
 /* ---------------- ticker ---------------- */
 .news-ticker{ overflow:hidden; white-space:nowrap; margin-bottom:20px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:9px 0; }
@@ -126,52 +116,55 @@ button{ font-family:inherit; }
 .ticker-text{ white-space:nowrap; padding-right:120px; font-size:12px; font-family:'IBM Plex Mono',monospace; letter-spacing:0.04em; text-transform:uppercase; }
 @keyframes scrollLoop{ 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
 
-/* ---------------- grid & field cards ---------------- */
-.grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; }
+/* ---------------- free-layout grid ---------------- */
+.grid{ display:grid; grid-template-columns:repeat(12, 1fr); grid-auto-rows:32px; gap:16px; position:relative; }
+.grid.edit-mode .card{ outline:1.5px dashed rgba(255,176,32,0.55); outline-offset:2px; }
 .card-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.card-icon{ font-size:22px; }
-.card-label{ font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; }
-.big{ font-family:'IBM Plex Mono',monospace; font-size:44px; font-weight:600; line-height:1; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
-.big .unit{ font-size:18px; font-weight:400; opacity:0.55; margin-left:6px; }
-.small{ font-size:14px; opacity:0.6; font-family:'IBM Plex Mono',monospace; }
+.grid.edit-mode .card-head{ cursor:move; }
+.card-icon{ font-size:22px; flex-shrink:0; }
+.card-label{ font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.card-body{ flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; }
+.big{ font-family:'IBM Plex Mono',monospace; font-size:40px; font-weight:600; line-height:1; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+.big .unit{ font-size:16px; font-weight:400; opacity:0.55; margin-left:6px; }
+.small{ font-size:13px; opacity:0.6; font-family:'IBM Plex Mono',monospace; }
 
-/* segmented / striped gauge meter */
-.gauge-track{
-  position:relative; width:100%; height:22px; border-radius:5px; overflow:hidden;
-  background:rgba(255,255,255,0.05);
-  background-image:repeating-linear-gradient(90deg, rgba(0,0,0,0.4) 0 1px, transparent 1px 5%);
-  margin-top:12px;
-  border:1px solid var(--border);
-}
-.gauge-fill{
-  height:100%;
-  background:repeating-linear-gradient(135deg, var(--accent-2) 0 8px, #17805c 8px 16px);
-  transition:width 0.6s ease;
-}
+.gauge-track{ position:relative; width:100%; height:20px; border-radius:5px; overflow:hidden; background:rgba(255,255,255,0.05);
+  background-image:repeating-linear-gradient(90deg, rgba(0,0,0,0.4) 0 1px, transparent 1px 5%); margin-top:10px; border:1px solid var(--border); flex-shrink:0; }
+.gauge-fill{ height:100%; background:repeating-linear-gradient(135deg, var(--accent-2) 0 8px, #17805c 8px 16px); transition:width 0.6s ease; }
 
-/* status LED */
-.status-row{ display:flex; align-items:center; gap:10px; }
+.radial-wrap{ display:flex; align-items:center; justify-content:center; flex:1; min-height:0; }
+.radial-wrap svg{ width:100%; height:100%; max-width:160px; max-height:160px; }
+.radial-value{ font-family:'IBM Plex Mono',monospace; font-weight:600; }
+
+.chart-card-wrap{ position:relative; flex:1; min-height:0; margin-top:6px; }
+
+.status-row{ display:flex; align-items:center; gap:10px; flex:1; }
 .led-dot{ width:13px; height:13px; border-radius:50%; background:rgba(255,255,255,0.18); flex-shrink:0; }
 .led-dot.on{ background:var(--accent-2); box-shadow:0 0 10px 3px rgba(53,224,161,0.65); }
-.status-text{ font-family:'IBM Plex Mono',monospace; font-weight:600; letter-spacing:0.06em; font-size:20px; text-transform:uppercase; }
+.status-text{ font-family:'IBM Plex Mono',monospace; font-weight:600; letter-spacing:0.06em; font-size:18px; text-transform:uppercase; }
 
 .chart-trigger{
-  position:absolute; bottom:12px; right:12px; width:34px; height:34px; border-radius:8px;
-  background:var(--panel); border:1px solid var(--border); color:white; font-size:14px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; transition:0.2s;
+  position:absolute; bottom:10px; right:10px; width:32px; height:32px; border-radius:8px;
+  background:var(--panel); border:1px solid var(--border); color:white; font-size:13px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:0.2s; z-index:2;
 }
 .chart-trigger:hover{ background:var(--panel-strong); }
+.grid.edit-mode .chart-trigger{ display:none; }
 
-.datetime-card #dateDisplay{ font-size:13px; opacity:0.6; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.04em; }
-.datetime-card #timeDisplay{ font-family:'IBM Plex Mono',monospace; font-size:42px; font-weight:600; margin-top:6px; }
+.resize-handle{ position:absolute; right:2px; bottom:2px; width:20px; height:20px; cursor:nwse-resize; opacity:0; z-index:3; }
+.grid.edit-mode .resize-handle{ opacity:0.7; }
+.resize-handle::before{ content:""; position:absolute; right:5px; bottom:5px; width:9px; height:9px; border-right:2px solid var(--accent); border-bottom:2px solid var(--accent); }
+
+.datetime-card #dateDisplay{ font-size:12px; opacity:0.6; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.04em; }
+.datetime-card #timeDisplay{ font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:600; margin-top:4px; }
 
 .add-card{
   border:1.5px dashed var(--border); background:transparent; box-shadow:none;
-  display:flex; align-items:center; justify-content:center; cursor:pointer; min-height:200px;
-  flex-direction:column; gap:10px; opacity:0.6; transition:0.2s; border-radius:14px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; opacity:0.6; transition:0.2s; border-radius:14px;
+  flex-direction:column; gap:8px; grid-column:span 3; grid-row:span 5;
 }
 .add-card:hover{ opacity:1; border-color:var(--accent); background:var(--accent-soft); }
-.add-card .plus{ font-size:32px; color:var(--accent); }
+.add-card .plus{ font-size:30px; color:var(--accent); }
 
 .empty-state{ text-align:center; padding:60px 20px; grid-column:1/-1; }
 .empty-state .emoji{ font-size:44px; margin-bottom:14px; opacity:0.7; }
@@ -199,6 +192,7 @@ button{ font-family:inherit; }
 .settings-hint{ font-size:11.5px; opacity:0.5; margin-top:4px; line-height:1.5; }
 .checkbox-row{ display:flex; align-items:center; gap:8px; cursor:pointer; }
 .checkbox-row input{ width:auto !important; }
+.danger-zone{ border-top:1px dashed var(--border); margin-top:18px; padding-top:16px; }
 
 .field-row{ background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; display:grid; grid-template-columns:1fr 1fr; gap:8px 10px; }
 .field-row-top{ display:flex; justify-content:space-between; align-items:center; grid-column:1/-1; margin-bottom:4px; }
@@ -214,6 +208,8 @@ button{ font-family:inherit; }
 
 .add-field-btn{ width:100%; padding:12px; border-radius:9px; border:1.5px dashed var(--border); background:transparent; color:white; font-weight:700; cursor:pointer; margin-bottom:16px; }
 .add-field-btn:hover{ border-color:var(--accent); background:var(--accent-soft); }
+.arrange-btn{ width:100%; padding:10px; border-radius:9px; border:1px solid var(--border); background:rgba(255,255,255,0.04); color:white; font-weight:600; font-size:13px; cursor:pointer; margin-bottom:16px; }
+.arrange-btn:hover{ background:var(--panel-strong); }
 
 .settings-actions{ display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
 .settings-actions .btn{ flex:1; min-width:110px; }
@@ -227,14 +223,20 @@ button{ font-family:inherit; }
 .setup-warning{ max-width:640px; margin:60px auto; padding:30px; text-align:left; line-height:1.7; }
 .setup-warning code{ background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:5px; font-family:'IBM Plex Mono',monospace; }
 
-@media(max-width:640px){
+.mobile-note{ display:none; font-size:11px; opacity:0.5; margin-left:8px; }
+
+@media(max-width:760px){
   .container{ padding:18px; }
   .station-name{ font-size:16px; padding:8px 16px; }
-  .big{ font-size:34px; }
   .header{ justify-content:center; text-align:center; }
   .panel{ padding:20px; }
   .field-row{ grid-template-columns:1fr; }
   .credit{ transform:scale(0.85); bottom:8px; right:8px; }
+  /* on small screens ignore free layout — stack single column in field order */
+  .grid{ display:flex !important; flex-direction:column; }
+  .grid .card, .grid .add-card{ width:100% !important; grid-column:auto !important; grid-row:auto !important; min-height:190px; }
+  .big{ font-size:32px; }
+  #layoutEditBtn{ display:none; }
 }
 </style>
 </head>
@@ -286,15 +288,18 @@ button{ font-family:inherit; }
     </div>
     <div class="header-right">
       <div class="user-chip">👤 <span id="userEmailChip">-</span></div>
+      <button class="icon-btn" id="layoutEditBtn" title="แก้ไขผังการ์ด (ลาก/ขยายได้)">⛶</button>
       <button class="icon-btn" id="openSettingsBtn" title="ตั้งค่า">⚙️</button>
       <button class="icon-btn" id="logoutBtn" title="ออกจากระบบ">🚪</button>
     </div>
   </div>
 
+  <div class="project-bar" id="projectBar"></div>
+
   <div class="news-ticker">
     <div class="ticker-track">
-      <div class="ticker-text">🛰️ ระบบแดชบอร์ด IoT ส่วนตัว — ดึงข้อมูลตรงจาก ThingSpeak Channel ของคุณเอง แบบเรียลไทม์</div>
-      <div class="ticker-text">🛰️ ระบบแดชบอร์ด IoT ส่วนตัว — ดึงข้อมูลตรงจาก ThingSpeak Channel ของคุณเอง แบบเรียลไทม์</div>
+      <div class="ticker-text">🛰️ ระบบแดชบอร์ด IoT ส่วนตัว — ดึงข้อมูลตรงจาก ThingSpeak Channel ของคุณเอง แบบเรียลไทม์ · โหมดแก้ไขผัง: กด ⛶ เพื่อลาก/ขยายการ์ดได้อิสระ</div>
+      <div class="ticker-text">🛰️ ระบบแดชบอร์ด IoT ส่วนตัว — ดึงข้อมูลตรงจาก ThingSpeak Channel ของคุณเอง แบบเรียลไทม์ · โหมดแก้ไขผัง: กด ⛶ เพื่อลาก/ขยายการ์ดได้อิสระ</div>
     </div>
   </div>
 
@@ -304,8 +309,8 @@ button{ font-family:inherit; }
 <!-- ============== SETTINGS MODAL ============== -->
 <div class="overlay" id="settingsOverlay">
   <div class="panel">
-    <h3>⚙️ ตั้งค่าแดชบอร์ด</h3>
-    <p class="panel-sub">ปรับชื่อ ธีม การเชื่อมต่อ การ์ด การแชร์ และการแจ้งเตือนของคุณ</p>
+    <h3>⚙️ ตั้งค่าโปรเจกต์</h3>
+    <p class="panel-sub">ปรับชื่อ ธีม การเชื่อมต่อ การ์ด การแชร์ และการแจ้งเตือนของโปรเจกต์นี้</p>
 
     <div class="settings-tabs">
       <div class="settings-tab active" data-tab="general">ทั่วไป</div>
@@ -318,13 +323,13 @@ button{ font-family:inherit; }
     <!-- General -->
     <div class="settings-pane active" id="pane-general">
       <div class="settings-field">
-        <label>ชื่อสถานี / ชื่อแดชบอร์ด</label>
-        <input type="text" id="cfgName" placeholder="เช่น แดชบอร์ดฟาร์มของฉัน">
+        <label>ชื่อโปรเจกต์</label>
+        <input type="text" id="cfgName" placeholder="เช่น ฟาร์มโรงเรือนที่ 1">
       </div>
       <div class="settings-field">
         <label>ธีมพื้นหลัง</label>
         <select id="cfgTheme">
-          <option value="green">มาตรฐาน (Instrument Dark)</option>
+          <option value="green">มาตรฐาน (Aurora Dark)</option>
           <option value="blue">น้ำเงินเข้ม</option>
           <option value="purple">ม่วง-ชมพู</option>
           <option value="sunset">ส้ม-แดง (Sunset)</option>
@@ -339,6 +344,10 @@ button{ font-family:inherit; }
         <label>หรืออัปโหลดรูปพื้นหลังของคุณเอง</label>
         <input type="file" id="cfgBgFile" accept="image/*">
         <div class="settings-hint" id="bgUploadStatus">ไฟล์จะถูกเก็บใน Supabase Storage ของโปรเจกต์คุณ (ดูขั้นตอนเปิดใช้ที่ SETUP_GUIDE.md)</div>
+      </div>
+      <div class="danger-zone">
+        <button type="button" class="btn btn-danger" id="btnDeleteProject" style="width:100%;">🗑 ลบโปรเจกต์นี้</button>
+        <div class="settings-hint">ลบแล้วกู้คืนไม่ได้ ข้อมูลการ์ดและการตั้งค่าทั้งหมดของโปรเจกต์นี้จะหายไป</div>
       </div>
     </div>
 
@@ -358,13 +367,14 @@ button{ font-family:inherit; }
     <!-- Fields -->
     <div class="settings-pane" id="pane-fields">
       <button type="button" class="add-field-btn" id="btnAddField">+ เพิ่มการ์ด/ฟิลด์ใหม่</button>
+      <button type="button" class="arrange-btn" id="btnArrangeFields">🔄 จัดเรียงการ์ดอัตโนมัติ (รีเซ็ตผังที่ลากไว้)</button>
       <div id="fieldsList"></div>
     </div>
 
     <!-- Sharing -->
     <div class="settings-pane" id="pane-sharing">
       <div class="settings-field">
-        <label class="checkbox-row"><input type="checkbox" id="cfgIsPublic"> เปิดแชร์แดชบอร์ดนี้แบบสาธารณะ (ดูได้โดยไม่ต้องล็อกอิน)</label>
+        <label class="checkbox-row"><input type="checkbox" id="cfgIsPublic"> เปิดแชร์โปรเจกต์นี้แบบสาธารณะ (ดูได้โดยไม่ต้องล็อกอิน)</label>
         <div class="settings-hint">คนที่มีลิงก์จะเห็นค่าที่วัดได้แบบเรียลไทม์แบบอ่านอย่างเดียว แก้ไขอะไรไม่ได้ ปิดสวิตช์นี้เมื่อไรก็ปิดการเข้าถึงทันที</div>
       </div>
       <div class="settings-field" id="shareLinkBox" style="display:none;">
@@ -398,6 +408,22 @@ button{ font-family:inherit; }
   </div>
 </div>
 
+<!-- ============== NEW PROJECT MODAL ============== -->
+<div class="overlay" id="newProjectOverlay">
+  <div class="panel" style="width:420px;">
+    <h3>➕ โปรเจกต์ใหม่</h3>
+    <p class="panel-sub">ตั้งชื่อโปรเจกต์ — แก้ไขรายละเอียดอื่น ๆ ได้ภายหลังจากแท็บตั้งค่า</p>
+    <div class="settings-field">
+      <label>ชื่อโปรเจกต์</label>
+      <input type="text" id="newProjectName" placeholder="เช่น โรงเรือนที่ 2">
+    </div>
+    <div class="settings-actions">
+      <button class="btn btn-primary" id="btnCreateProject">สร้างโปรเจกต์</button>
+      <button class="btn btn-ghost" id="btnCancelNewProject">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============== CHART MODAL ============== -->
 <div class="overlay" id="chartOverlay">
   <div class="panel" style="width:640px;">
@@ -414,8 +440,7 @@ button{ font-family:inherit; }
 
 <script>
 /* =========================================================================
-   1) CONFIG — แก้ 2 บรรทัดนี้ให้เป็นค่าของโปรเจกต์ Supabase ของคุณ
-   ดูวิธีหาได้ใน SETUP_GUIDE.md
+   1) CONFIG
    ========================================================================= */
 const SUPABASE_URL = "https://euhbpcwzwljwvrhkvvqi.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_KCsq29eQ4Ijx3h_QN3WVjA_z4pQewQ5";
@@ -429,12 +454,42 @@ const THEMES = {
   sunset: "linear-gradient(180deg, #12090a 0%, #201009 100%)"
 };
 
+const GRID_COLS = 12;
+const ROW_H = 32;
+const GAP = 16;
+
+function defaultSizeFor(type){
+  switch(type){
+    case "chart":  return { w:4, h:8 };
+    case "radial": return { w:3, h:7 };
+    case "gauge":  return { w:3, h:6 };
+    case "status": return { w:3, h:4 };
+    case "clock":  return { w:3, h:5 };
+    default:       return { w:3, h:5 };
+  }
+}
+
+function autoArrangeLayouts(fields){
+  let cursorX = 0, cursorY = 0, rowMaxH = 0;
+  fields.forEach(f => {
+    const size = defaultSizeFor(f.type);
+    const w = Math.min(size.w, GRID_COLS);
+    const h = size.h;
+    if(cursorX + w > GRID_COLS){ cursorX = 0; cursorY += rowMaxH; rowMaxH = 0; }
+    f.layout = { x:cursorX, y:cursorY, w, h };
+    cursorX += w;
+    rowMaxH = Math.max(rowMaxH, h);
+  });
+}
+
 const DEFAULT_FIELDS = [
+  { id:"f_clock", label:"วันที่ & เวลา", tsField:null, unit:"", icon:"🕒", type:"clock", enabled:true, alertEnabled:false, alertLow:null, alertHigh:null },
   { id:"f_temp", label:"อุณหภูมิ", tsField:"field1", unit:"°C", icon:"🌡️", type:"number", enabled:true, min:0, max:50, alertEnabled:false, alertLow:null, alertHigh:null },
   { id:"f_hum",  label:"ความชื้นอากาศ", tsField:"field2", unit:"%", icon:"💧", type:"number", enabled:true, min:0, max:100, alertEnabled:false, alertLow:null, alertHigh:null },
-  { id:"f_soil", label:"ความชื้นในดิน", tsField:"field3", unit:"%", icon:"🌱", type:"gauge", enabled:true, min:0, max:100, alertEnabled:false, alertLow:null, alertHigh:null },
+  { id:"f_soil", label:"ความชื้นในดิน", tsField:"field3", unit:"%", icon:"🌱", type:"radial", enabled:true, min:0, max:100, alertEnabled:false, alertLow:null, alertHigh:null },
   { id:"f_pump", label:"ปั๊มน้ำ", tsField:"field4", unit:"", icon:"⚙️", type:"status", enabled:true, min:0, max:1, alertEnabled:false, alertLow:null, alertHigh:null }
 ];
+autoArrangeLayouts(DEFAULT_FIELDS);
 
 const configMissing = !SUPABASE_URL || SUPABASE_URL.startsWith("YOUR_") || !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith("YOUR_");
 
@@ -465,10 +520,16 @@ function initApp(){
   authScreen.classList.remove("hidden");
 
   let currentUser = null;
-  let dashboard = null;
+  let projects = [];
+  let activeProjectId = null;
+  let dashboard = null; // alias for the active project row
   let fieldsDraft = [];
   let pendingShareSlug = null;
   let pollTimer = null;
+  let historyPollTimer = null;
+  let historyCache = null;
+  let layoutEditMode = false;
+  let chartInstances = {}; // fieldId -> Chart.js instance (inline card charts)
 
   /* ---------------- AUTH ---------------- */
   let authMode = "login";
@@ -546,6 +607,7 @@ function initApp(){
       enterApp();
     } else {
       currentUser = null;
+      projects = [];
       dashboard = null;
       stopPolling();
       appScreen.classList.add("hidden");
@@ -557,7 +619,8 @@ function initApp(){
     authScreen.classList.add("hidden");
     appScreen.classList.remove("hidden");
     document.getElementById("userEmailChip").innerText = currentUser.email;
-    await loadOrCreateDashboard();
+    await loadProjects();
+    renderProjectBar();
     applyTheme();
     renderGrid();
     startPolling();
@@ -565,41 +628,146 @@ function initApp(){
 
   document.getElementById("logoutBtn").addEventListener("click", async () => { await sb.auth.signOut(); });
 
-  /* ---------------- DASHBOARD ROW ---------------- */
-  async function loadOrCreateDashboard(){
-    const { data, error } = await sb.from("dashboards").select("*").eq("user_id", currentUser.id).maybeSingle();
-    if(error){ console.error(error); }
-    if(data){
-      dashboard = data;
-    } else {
-      const defaultRow = {
-        user_id: currentUser.id,
-        station_name: "แดชบอร์ดของฉัน",
-        theme: "green",
-        background_url: "",
-        thingspeak_channel: "",
-        thingspeak_read_key: "",
-        fields: DEFAULT_FIELDS,
-        is_public: false,
-        share_slug: null,
-        alerts_enabled: false,
-        alert_email: "",
-        last_alert_sent: {}
-      };
-      const { data: inserted, error: insErr } = await sb.from("dashboards").insert(defaultRow).select().single();
-      if(insErr){ console.error(insErr); }
-      dashboard = inserted || defaultRow;
-    }
+  /* ---------------- PROJECTS ---------------- */
+  function blankProjectRow(name){
+    return {
+      user_id: currentUser.id,
+      name: name || "โปรเจกต์ของฉัน",
+      theme: "green",
+      background_url: "",
+      thingspeak_channel: "",
+      thingspeak_read_key: "",
+      fields: JSON.parse(JSON.stringify(DEFAULT_FIELDS)),
+      is_public: false,
+      share_slug: null,
+      alerts_enabled: false,
+      alert_email: "",
+      last_alert_sent: {},
+      sort_order: 0
+    };
   }
+
+  async function loadProjects(){
+    const { data, error } = await sb.from("projects").select("*").eq("user_id", currentUser.id).order("sort_order", { ascending:true }).order("created_at", { ascending:true });
+    if(error){ console.error(error); }
+    if(data && data.length > 0){
+      projects = data;
+    } else {
+      // try to migrate a legacy single-row "dashboards" record, else create a fresh default project
+      let migrated = null;
+      try{
+        const legacy = await sb.from("dashboards").select("*").eq("user_id", currentUser.id).maybeSingle();
+        if(legacy.data){
+          const row = legacy.data;
+          const insertRow = {
+            user_id: currentUser.id,
+            name: row.station_name || "โปรเจกต์ของฉัน",
+            theme: row.theme || "green",
+            background_url: row.background_url || "",
+            thingspeak_channel: row.thingspeak_channel || "",
+            thingspeak_read_key: row.thingspeak_read_key || "",
+            fields: (row.fields && row.fields.length) ? row.fields : JSON.parse(JSON.stringify(DEFAULT_FIELDS)),
+            is_public: !!row.is_public,
+            share_slug: row.share_slug || null,
+            alerts_enabled: !!row.alerts_enabled,
+            alert_email: row.alert_email || "",
+            last_alert_sent: row.last_alert_sent || {},
+            sort_order: 0
+          };
+          insertRow.fields.forEach(f => { if(!f.layout) f.layout = null; });
+          if(insertRow.fields.some(f => !f.layout)) autoArrangeLayouts(insertRow.fields);
+          const ins = await sb.from("projects").insert(insertRow).select().single();
+          migrated = ins.data;
+        }
+      } catch(e){ /* ignore, legacy table may not exist */ }
+
+      if(migrated){
+        projects = [migrated];
+      } else {
+        const { data: created } = await sb.from("projects").insert(blankProjectRow("โปรเจกต์ของฉัน")).select().single();
+        projects = created ? [created] : [blankProjectRow("โปรเจกต์ของฉัน")];
+      }
+    }
+    activeProjectId = projects[0].id || null;
+    dashboard = projects[0];
+    ensureLayouts(dashboard);
+  }
+
+  function ensureLayouts(proj){
+    if(!proj.fields) proj.fields = [];
+    if(proj.fields.some(f => !f.layout)) autoArrangeLayouts(proj.fields);
+  }
+
+  function renderProjectBar(){
+    const bar = document.getElementById("projectBar");
+    let html = projects.map(p => `<div class="project-tab ${p.id === activeProjectId ? "active" : ""}" data-project-id="${p.id}">${escapeHtml(p.name || "โปรเจกต์")}</div>`).join("");
+    html += `<div class="project-tab-add" id="btnAddProject" title="เพิ่มโปรเจกต์ใหม่">＋</div>`;
+    bar.innerHTML = html;
+    bar.querySelectorAll(".project-tab[data-project-id]").forEach(tab => {
+      tab.addEventListener("click", () => switchProject(tab.getAttribute("data-project-id")));
+    });
+    document.getElementById("btnAddProject").addEventListener("click", () => {
+      document.getElementById("newProjectName").value = "";
+      newProjectOverlay.classList.add("open");
+    });
+  }
+
+  function switchProject(id){
+    if(id === activeProjectId) return;
+    const found = projects.find(p => p.id === id);
+    if(!found) return;
+    activeProjectId = id;
+    dashboard = found;
+    ensureLayouts(dashboard);
+    renderProjectBar();
+    applyTheme();
+    renderGrid();
+    startPolling();
+  }
+
+  const newProjectOverlay = document.getElementById("newProjectOverlay");
+  document.getElementById("btnCancelNewProject").addEventListener("click", () => newProjectOverlay.classList.remove("open"));
+  newProjectOverlay.addEventListener("click", (e) => { if(e.target === newProjectOverlay) newProjectOverlay.classList.remove("open"); });
+  document.getElementById("btnCreateProject").addEventListener("click", async () => {
+    const name = document.getElementById("newProjectName").value.trim() || "โปรเจกต์ใหม่";
+    const row = blankProjectRow(name);
+    row.sort_order = projects.length;
+    const { data, error } = await sb.from("projects").insert(row).select().single();
+    if(error){ alert("สร้างโปรเจกต์ไม่สำเร็จ: " + error.message); return; }
+    projects.push(data);
+    newProjectOverlay.classList.remove("open");
+    switchProject(data.id);
+  });
+
+  document.getElementById("btnDeleteProject").addEventListener("click", async () => {
+    if(!confirm(`ลบโปรเจกต์ "${dashboard.name || ""}" ใช่ไหม? การกระทำนี้กู้คืนไม่ได้`)) return;
+    const idToDelete = activeProjectId;
+    const { error } = await sb.from("projects").delete().eq("id", idToDelete);
+    if(error){ alert("ลบไม่สำเร็จ: " + error.message); return; }
+    projects = projects.filter(p => p.id !== idToDelete);
+    settingsOverlay.classList.remove("open");
+    if(projects.length === 0){
+      const { data: created } = await sb.from("projects").insert(blankProjectRow("โปรเจกต์ของฉัน")).select().single();
+      projects = created ? [created] : [];
+    }
+    activeProjectId = projects[0].id;
+    dashboard = projects[0];
+    ensureLayouts(dashboard);
+    renderProjectBar();
+    applyTheme();
+    renderGrid();
+    startPolling();
+  });
 
   async function saveDashboard(patch){
     dashboard = { ...dashboard, ...patch };
-    const { error } = await sb.from("dashboards").update(patch).eq("user_id", currentUser.id);
+    projects = projects.map(p => p.id === activeProjectId ? dashboard : p);
+    const { error } = await sb.from("projects").update(patch).eq("id", activeProjectId);
     return error;
   }
 
   function applyTheme(){
-    document.getElementById("stationTitle").innerText = dashboard.station_name || "แดชบอร์ดของฉัน";
+    document.getElementById("stationTitle").innerText = dashboard.name || "แดชบอร์ดของฉัน";
     if(dashboard.background_url){
       document.body.style.background = `url('${dashboard.background_url}') no-repeat center center fixed`;
       document.body.style.backgroundSize = "cover";
@@ -609,76 +777,218 @@ function initApp(){
     }
   }
 
-  /* ---------------- CLOCK ---------------- */
-  function clockHTML(){
-    return `<div class="card datetime-card">
-      <div class="card-head"><span class="card-icon">🕒</span><span class="card-label">วันที่ &amp; เวลา</span></div>
-      <div><div id="dateDisplay"></div><div id="timeDisplay"></div></div>
-    </div>`;
-  }
-  function updateClock(){
-    const now = new Date();
-    const d = document.getElementById("dateDisplay");
-    const t = document.getElementById("timeDisplay");
-    if(d) d.innerText = now.toLocaleDateString("th-TH",{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    if(t) t.innerText = now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
-  }
-  setInterval(updateClock, 1000);
+  /* ---------------- LAYOUT EDIT MODE ---------------- */
+  const layoutEditBtn = document.getElementById("layoutEditBtn");
+  layoutEditBtn.addEventListener("click", () => {
+    layoutEditMode = !layoutEditMode;
+    layoutEditBtn.classList.toggle("active", layoutEditMode);
+    fieldsGridEl().classList.toggle("edit-mode", layoutEditMode);
+  });
+  function fieldsGridEl(){ return document.getElementById("fieldsGrid"); }
 
-  /* ---------------- GRID RENDER ---------------- */
-  const fieldsGrid = document.getElementById("fieldsGrid");
+  let saveLayoutTimer = null;
+  function saveLayoutDebounced(){
+    if(saveLayoutTimer) clearTimeout(saveLayoutTimer);
+    saveLayoutTimer = setTimeout(() => {
+      saveDashboard({ fields: dashboard.fields });
+    }, 500);
+  }
 
+  function cellMetrics(){
+    const grid = fieldsGridEl();
+    const totalWidth = grid.clientWidth;
+    const colWidth = (totalWidth - GAP * (GRID_COLS - 1)) / GRID_COLS;
+    return { colWidth, rowHeight: ROW_H, gap: GAP };
+  }
+
+  function applyCardStyle(cardEl, layout){
+    cardEl.style.gridColumn = (layout.x + 1) + " / span " + layout.w;
+    cardEl.style.gridRow = (layout.y + 1) + " / span " + layout.h;
+  }
+
+  function attachDragAndResize(cardEl, field){
+    const head = cardEl.querySelector(".card-head");
+    const handle = cardEl.querySelector(".resize-handle");
+
+    if(head){
+      head.addEventListener("mousedown", (e) => {
+        if(!layoutEditMode) return;
+        e.preventDefault();
+        const { colWidth, rowHeight, gap } = cellMetrics();
+        const startX = e.clientX, startY = e.clientY;
+        const startLayout = { ...field.layout };
+        function onMove(ev){
+          const dx = ev.clientX - startX, dy = ev.clientY - startY;
+          const deltaCols = Math.round(dx / (colWidth + gap));
+          const deltaRows = Math.round(dy / (rowHeight + gap));
+          const newX = Math.max(0, Math.min(GRID_COLS - startLayout.w, startLayout.x + deltaCols));
+          const newY = Math.max(0, startLayout.y + deltaRows);
+          field.layout = { ...field.layout, x:newX, y:newY };
+          applyCardStyle(cardEl, field.layout);
+        }
+        function onUp(){
+          document.removeEventListener("mousemove", onMove);
+          document.removeEventListener("mouseup", onUp);
+          saveLayoutDebounced();
+        }
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+    }
+
+    if(handle){
+      handle.addEventListener("mousedown", (e) => {
+        if(!layoutEditMode) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const { colWidth, rowHeight, gap } = cellMetrics();
+        const startX = e.clientX, startY = e.clientY;
+        const startLayout = { ...field.layout };
+        function onMove(ev){
+          const dx = ev.clientX - startX, dy = ev.clientY - startY;
+          const deltaCols = Math.round(dx / (colWidth + gap));
+          const deltaRows = Math.round(dy / (rowHeight + gap));
+          const newW = Math.max(2, Math.min(GRID_COLS - startLayout.x, startLayout.w + deltaCols));
+          const newH = Math.max(3, startLayout.h + deltaRows);
+          field.layout = { ...field.layout, w:newW, h:newH };
+          applyCardStyle(cardEl, field.layout);
+          if(field.type === "chart"){
+            const chart = chartInstances[field.id];
+            if(chart) chart.resize();
+          }
+        }
+        function onUp(){
+          document.removeEventListener("mousemove", onMove);
+          document.removeEventListener("mouseup", onUp);
+          saveLayoutDebounced();
+        }
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+    }
+  }
+
+  /* ---------------- CARD TEMPLATES ---------------- */
   function fieldCardHTML(f){
+    const resizeHandle = `<div class="resize-handle"></div>`;
+    if(f.type === "clock"){
+      return `<div class="card datetime-card" data-field-id="${f.id}">
+        <div class="card-head"><span class="card-icon">${f.icon||"🕒"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
+        <div class="card-body"><div id="dateDisplay-${f.id}" class="small" style="text-transform:uppercase;"></div><div id="timeDisplay-${f.id}" style="font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:600; margin-top:4px;"></div></div>
+        ${resizeHandle}
+      </div>`;
+    }
     if(f.type === "status"){
       return `<div class="card" data-field-id="${f.id}">
         <div class="card-head"><span class="card-icon">${f.icon||"⚙️"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
-        <div class="status-row"><span class="led-dot" id="led-${f.id}"></span><span class="status-text" id="val-${f.id}">--</span></div>
+        <div class="card-body status-row"><span class="led-dot" id="led-${f.id}"></span><span class="status-text" id="val-${f.id}">--</span></div>
         <button class="chart-trigger" data-chart-for="${f.id}" title="ดูกราฟย้อนหลัง">📈</button>
+        ${resizeHandle}
       </div>`;
     }
     if(f.type === "gauge"){
       return `<div class="card" data-field-id="${f.id}">
         <div class="card-head"><span class="card-icon">${f.icon||"📊"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
-        <div>
+        <div class="card-body">
           <div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div>
           <div class="gauge-track"><div class="gauge-fill" id="bar-${f.id}" style="width:0%"></div></div>
         </div>
         <button class="chart-trigger" data-chart-for="${f.id}" title="ดูกราฟย้อนหลัง">📈</button>
+        ${resizeHandle}
+      </div>`;
+    }
+    if(f.type === "radial"){
+      return `<div class="card" data-field-id="${f.id}">
+        <div class="card-head"><span class="card-icon">${f.icon||"🎯"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
+        <div class="radial-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+            <circle id="radial-${f.id}" cx="60" cy="60" r="50" fill="none" stroke="var(--accent-2)" stroke-width="10"
+              stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="58" text-anchor="middle" class="radial-value" font-size="22" fill="white" id="radialtext-${f.id}">--</text>
+            <text x="60" y="76" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.5)" font-family="IBM Plex Sans Thai">${escapeHtml(f.unit||"")}</text>
+          </svg>
+        </div>
+        <button class="chart-trigger" data-chart-for="${f.id}" title="ดูกราฟย้อนหลัง">📈</button>
+        ${resizeHandle}
+      </div>`;
+    }
+    if(f.type === "chart"){
+      return `<div class="card" data-field-id="${f.id}">
+        <div class="card-head"><span class="card-icon">${f.icon||"📈"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
+        <div class="chart-card-wrap"><canvas id="chartcard-${f.id}"></canvas></div>
+        <button class="chart-trigger" data-chart-for="${f.id}" title="ดูกราฟแบบเต็ม">⛶</button>
+        ${resizeHandle}
       </div>`;
     }
     return `<div class="card" data-field-id="${f.id}">
       <div class="card-head"><span class="card-icon">${f.icon||"📟"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
-      <div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div>
+      <div class="card-body"><div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div></div>
       <button class="chart-trigger" data-chart-for="${f.id}" title="ดูกราฟย้อนหลัง">📈</button>
+      ${resizeHandle}
     </div>`;
   }
 
+  /* ---------------- GRID RENDER ---------------- */
   function renderGrid(){
+    Object.values(chartInstances).forEach(c => { try{ c.destroy(); }catch(e){} });
+    chartInstances = {};
+
+    const grid = fieldsGridEl();
     const fields = (dashboard.fields || []).filter(f => f.enabled);
-    let html = clockHTML();
     if(fields.length === 0){
-      html += `<div class="empty-state panel-surface"><div class="emoji">📭</div>
+      grid.innerHTML = `<div class="empty-state panel-surface"><div class="emoji">📭</div>
         <div style="font-size:17px; font-weight:700; margin-bottom:6px;">ยังไม่มีการ์ดข้อมูล</div>
         <div style="opacity:0.6; font-size:13px;">กดปุ่ม “เพิ่มการ์ด” หรือเข้าไปที่ตั้งค่า เพื่อเพิ่มฟิลด์ที่ต้องการแสดง</div>
-      </div>`;
+      </div><div class="add-card" id="addCardBtn"><span class="plus">＋</span><span>เพิ่มการ์ด</span></div>`;
     } else {
-      html += fields.map(fieldCardHTML).join("");
+      grid.innerHTML = fields.map(fieldCardHTML).join("") + `<div class="add-card" id="addCardBtn"><span class="plus">＋</span><span>เพิ่มการ์ด</span></div>`;
     }
-    html += `<div class="add-card" id="addCardBtn"><span class="plus">＋</span><span>เพิ่มการ์ด</span></div>`;
-    fieldsGrid.innerHTML = html;
-    updateClock();
+    grid.classList.toggle("edit-mode", layoutEditMode);
+
+    fields.forEach(f => {
+      const cardEl = grid.querySelector(`[data-field-id="${f.id}"]`);
+      if(!cardEl) return;
+      applyCardStyle(cardEl, f.layout);
+      attachDragAndResize(cardEl, f);
+    });
+
     document.getElementById("addCardBtn").addEventListener("click", () => openSettings("fields", true));
-    fieldsGrid.querySelectorAll("[data-chart-for]").forEach(btn => {
+    grid.querySelectorAll("[data-chart-for]").forEach(btn => {
       btn.addEventListener("click", () => openHistoryChart(btn.getAttribute("data-chart-for")));
     });
+
+    updateAllClocks();
+    fields.filter(f => f.type === "chart").forEach(f => initInlineChart(f));
+    if(historyCache) updateAllChartCards();
   }
 
+  /* ---------------- CLOCK ---------------- */
+  function updateAllClocks(){
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("th-TH",{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    const timeStr = now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
+    (dashboard.fields || []).filter(f => f.enabled && f.type === "clock").forEach(f => {
+      const d = document.getElementById("dateDisplay-" + f.id);
+      const t = document.getElementById("timeDisplay-" + f.id);
+      if(d) d.innerText = dateStr;
+      if(t) t.innerText = timeStr;
+    });
+  }
+  setInterval(updateAllClocks, 1000);
+
   /* ---------------- LIVE DATA POLLING ---------------- */
-  function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
+  function stopPolling(){
+    if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+    if(historyPollTimer){ clearInterval(historyPollTimer); historyPollTimer = null; }
+  }
   function startPolling(){
     stopPolling();
     fetchLiveData();
     pollTimer = setInterval(fetchLiveData, 16000);
+    historyCache = null;
+    refreshHistoryCache();
+    historyPollTimer = setInterval(refreshHistoryCache, 60000);
   }
 
   async function fetchLiveData(){
@@ -689,6 +999,7 @@ function initApp(){
       const res = await fetch(`https://api.thingspeak.com/channels/${channel}/feeds/last.json?api_key=${readKey}`);
       const data = await res.json();
       (dashboard.fields || []).filter(f => f.enabled).forEach(f => {
+        if(f.type === "clock" || f.type === "chart") return;
         const raw = data[f.tsField];
         const value = raw === null || raw === undefined || raw === "" ? null : parseFloat(raw);
         renderFieldValue(f, value);
@@ -699,16 +1010,29 @@ function initApp(){
   }
 
   function renderFieldValue(f, value){
-    const valEl = document.getElementById("val-" + f.id);
-    if(!valEl) return;
     if(f.type === "status"){
-      const isOn = value !== null && value >= 1;
+      const valEl = document.getElementById("val-" + f.id);
       const ledEl = document.getElementById("led-" + f.id);
+      if(!valEl) return;
+      const isOn = value !== null && value >= 1;
       valEl.innerText = value === null ? "--" : (isOn ? "ทำงาน (ON)" : "ปิด (OFF)");
       valEl.style.color = isOn ? "var(--accent-2)" : "var(--text-dimmer)";
       if(ledEl) ledEl.classList.toggle("on", isOn);
       return;
     }
+    if(f.type === "radial"){
+      const circleEl = document.getElementById("radial-" + f.id);
+      const textEl = document.getElementById("radialtext-" + f.id);
+      const min = Number(f.min ?? 0), max = Number(f.max ?? 100);
+      const circumference = 314.16;
+      let pct = value === null || isNaN(value) ? 0 : ((value - min) / (max - min)) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      if(circleEl) circleEl.style.strokeDashoffset = circumference * (1 - pct/100);
+      if(textEl) textEl.textContent = value === null || isNaN(value) ? "--" : (Number.isInteger(value) ? value : value.toFixed(1));
+      return;
+    }
+    const valEl = document.getElementById("val-" + f.id);
+    if(!valEl) return;
     const unitSpan = valEl.querySelector(".unit");
     const unitHtml = unitSpan ? unitSpan.outerHTML : `<span class="unit">${escapeHtml(f.unit||"")}</span>`;
     if(value === null || isNaN(value)){
@@ -726,7 +1050,57 @@ function initApp(){
     }
   }
 
-  /* ---------------- HISTORY CHART ---------------- */
+  /* ---------------- SHARED HISTORY CACHE (for inline chart cards) ---------------- */
+  async function refreshHistoryCache(){
+    const channel = dashboard.thingspeak_channel;
+    const readKey = dashboard.thingspeak_read_key;
+    if(!channel || !readKey) return;
+    try{
+      const res = await fetch(`https://api.thingspeak.com/channels/${channel}/feeds.json?api_key=${readKey}&days=1`);
+      const data = await res.json();
+      historyCache = data.feeds || [];
+      updateAllChartCards();
+    } catch(err){
+      console.error("โหลดประวัติไม่สำเร็จ:", err);
+    }
+  }
+
+  function initInlineChart(f){
+    const canvas = document.getElementById("chartcard-" + f.id);
+    if(!canvas) return;
+    const ctx = canvas.getContext("2d");
+    chartInstances[f.id] = new Chart(ctx, {
+      type: "line",
+      data: { labels: [], datasets: [{
+        data: [], borderColor: "#ffb020", backgroundColor: "rgba(255,176,32,0.12)",
+        tension:0.3, pointRadius:0, borderWidth:2, fill:true
+      }]},
+      options: {
+        responsive:true, maintainAspectRatio:false, animation:false,
+        interaction:{ mode:"index", intersect:false },
+        plugins:{ legend:{ display:false } },
+        scales:{
+          x:{ display:false },
+          y:{ ticks:{ color:"#aab", font:{ size:10, family:"IBM Plex Mono" } }, grid:{ color:"rgba(255,255,255,0.06)" } }
+        }
+      }
+    });
+  }
+
+  function updateAllChartCards(){
+    if(!historyCache) return;
+    (dashboard.fields || []).filter(f => f.enabled && f.type === "chart").forEach(f => {
+      const chart = chartInstances[f.id];
+      if(!chart) return;
+      const labels = historyCache.map(x => new Date(x.created_at).toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'}));
+      const values = historyCache.map(x => x[f.tsField] !== null && x[f.tsField] !== undefined ? parseFloat(x[f.tsField]) : null);
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = values;
+      chart.update("none");
+    });
+  }
+
+  /* ---------------- HISTORY CHART MODAL (full-size, on demand) ---------------- */
   let historyChart = null;
   const chartOverlay = document.getElementById("chartOverlay");
   document.getElementById("btnCloseChart").addEventListener("click", () => chartOverlay.classList.remove("open"));
@@ -747,9 +1121,7 @@ function initApp(){
       return;
     }
     try{
-      const res = await fetch(`https://api.thingspeak.com/channels/${channel}/feeds.json?api_key=${readKey}&days=1`);
-      const data = await res.json();
-      const feeds = data.feeds || [];
+      const feeds = historyCache || (await (await fetch(`https://api.thingspeak.com/channels/${channel}/feeds.json?api_key=${readKey}&days=1`)).json()).feeds || [];
       const labels = feeds.map(x => new Date(x.created_at).toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'}));
       const values = feeds.map(x => x[f.tsField] !== null && x[f.tsField] !== undefined ? parseFloat(x[f.tsField]) : null);
       if(historyChart) historyChart.destroy();
@@ -790,7 +1162,7 @@ function initApp(){
   function openSettings(startTab, focusAddField){
     fieldsDraft = JSON.parse(JSON.stringify(dashboard.fields || []));
     pendingShareSlug = null;
-    document.getElementById("cfgName").value = dashboard.station_name || "";
+    document.getElementById("cfgName").value = dashboard.name || "";
     document.getElementById("cfgTheme").value = dashboard.theme || "green";
     document.getElementById("cfgBgUrl").value = dashboard.background_url || "";
     document.getElementById("bgUploadStatus").innerText = "ไฟล์จะถูกเก็บใน Supabase Storage ของโปรเจกต์คุณ (ดูขั้นตอนเปิดใช้ที่ SETUP_GUIDE.md)";
@@ -801,6 +1173,7 @@ function initApp(){
     updateShareLinkDisplay();
     document.getElementById("cfgAlertsEnabled").checked = !!dashboard.alerts_enabled;
     document.getElementById("cfgAlertEmail").value = dashboard.alert_email || "";
+    document.getElementById("btnDeleteProject").style.display = projects.length > 1 ? "block" : "none";
     saveMsg.innerText = "";
     renderFieldsDraft();
     switchSettingsTab(startTab || "general");
@@ -880,9 +1253,14 @@ function initApp(){
 
   /* ---- fields management ---- */
   const TS_FIELD_OPTIONS = ["field1","field2","field3","field4","field5","field6","field7","field8"];
-  const TYPE_OPTIONS = [["number","ตัวเลข"],["gauge","แถบวัดระดับ"],["status","สถานะ ON/OFF"]];
+  const TYPE_OPTIONS = [
+    ["number","ตัวเลข"], ["gauge","แถบวัด (Bar)"], ["radial","มาตรวัดวงกลม (Gauge)"],
+    ["chart","กราฟเส้น (Chart)"], ["status","สถานะ ON/OFF"], ["clock","นาฬิกา"]
+  ];
 
   function fieldRowHTML(f, idx){
+    const isClock = f.type === "clock";
+    const showRange = f.type === "gauge" || f.type === "radial";
     return `<div class="field-row" data-idx="${idx}">
       <div class="field-row-top">
         <span class="tag">การ์ดที่ ${idx+1}</span>
@@ -890,19 +1268,21 @@ function initApp(){
       </div>
       <div><span class="mini-label">ชื่อการ์ด</span><input type="text" data-k="label" value="${escapeAttr(f.label)}" placeholder="เช่น อุณหภูมิ"></div>
       <div><span class="mini-label">ไอคอน (emoji)</span><input type="text" data-k="icon" value="${escapeAttr(f.icon||"")}" placeholder="🌡️"></div>
-      <div><span class="mini-label">ThingSpeak Field</span>
-        <select data-k="tsField">${TS_FIELD_OPTIONS.map(o => `<option value="${o}" ${f.tsField===o?"selected":""}>${o}</option>`).join("")}</select>
-      </div>
-      <div><span class="mini-label">หน่วย</span><input type="text" data-k="unit" value="${escapeAttr(f.unit||"")}" placeholder="°C, %, ฯลฯ"></div>
       <div><span class="mini-label">รูปแบบการแสดงผล</span>
         <select data-k="type">${TYPE_OPTIONS.map(([v,l]) => `<option value="${v}" ${f.type===v?"selected":""}>${l}</option>`).join("")}</select>
       </div>
-      <div class="type-range" style="display:${f.type==="gauge"?"block":"none"};"><span class="mini-label">ค่าต่ำสุด (สำหรับแถบวัดระดับ)</span><input type="number" data-k="min" value="${f.min??0}"></div>
-      <div class="type-range2" style="display:${f.type==="gauge"?"block":"none"};"><span class="mini-label">ค่าสูงสุด (สำหรับแถบวัดระดับ)</span><input type="number" data-k="max" value="${f.max??100}"></div>
-      <div class="field-row-divider">⚠️ แจ้งเตือน (ไม่บังคับ — เว้นว่างถ้าไม่ต้องการ)</div>
-      <div><span class="mini-label">แจ้งเตือนถ้าต่ำกว่า</span><input type="number" data-k="alertLow" value="${f.alertLow ?? ""}" placeholder="ไม่ตั้งค่า"></div>
-      <div><span class="mini-label">แจ้งเตือนถ้าสูงกว่า</span><input type="number" data-k="alertHigh" value="${f.alertHigh ?? ""}" placeholder="ไม่ตั้งค่า"></div>
-      <div class="full"><label class="checkbox-row" style="font-size:12px;"><input type="checkbox" data-k="alertEnabled" ${f.alertEnabled ? "checked" : ""}> เปิดแจ้งเตือนสำหรับฟิลด์นี้</label></div>
+      <div class="row-ts-field" style="display:${isClock?"none":"block"};"><span class="mini-label">ThingSpeak Field</span>
+        <select data-k="tsField">${TS_FIELD_OPTIONS.map(o => `<option value="${o}" ${f.tsField===o?"selected":""}>${o}</option>`).join("")}</select>
+      </div>
+      <div class="row-unit" style="display:${isClock?"none":"block"};"><span class="mini-label">หน่วย</span><input type="text" data-k="unit" value="${escapeAttr(f.unit||"")}" placeholder="°C, %, ฯลฯ"></div>
+      <div class="type-range" style="display:${showRange?"block":"none"};"><span class="mini-label">ค่าต่ำสุด (สำหรับมาตรวัด)</span><input type="number" data-k="min" value="${f.min??0}"></div>
+      <div class="type-range2" style="display:${showRange?"block":"none"};"><span class="mini-label">ค่าสูงสุด (สำหรับมาตรวัด)</span><input type="number" data-k="max" value="${f.max??100}"></div>
+      <div class="row-alert-block" style="display:${isClock?"none":"contents"};">
+        <div class="field-row-divider">⚠️ แจ้งเตือน (ไม่บังคับ — เว้นว่างถ้าไม่ต้องการ)</div>
+        <div><span class="mini-label">แจ้งเตือนถ้าต่ำกว่า</span><input type="number" data-k="alertLow" value="${f.alertLow ?? ""}" placeholder="ไม่ตั้งค่า"></div>
+        <div><span class="mini-label">แจ้งเตือนถ้าสูงกว่า</span><input type="number" data-k="alertHigh" value="${f.alertHigh ?? ""}" placeholder="ไม่ตั้งค่า"></div>
+        <div class="full"><label class="checkbox-row" style="font-size:12px;"><input type="checkbox" data-k="alertEnabled" ${f.alertEnabled ? "checked" : ""}> เปิดแจ้งเตือนสำหรับฟิลด์นี้</label></div>
+      </div>
       <div class="row-actions"><button type="button" class="mini-btn del" data-action="delete">🗑 ลบการ์ดนี้</button></div>
     </div>`;
   }
@@ -925,9 +1305,17 @@ function initApp(){
           if(key === "alertLow" || key === "alertHigh") v = (v === "" ? null : Number(v));
           fieldsDraft[idx][key] = v;
           if(key === "type"){
-            const showRange = v === "gauge";
-            rowEl.querySelector(".type-range").style.display = showRange ? "block" : "none";
-            rowEl.querySelector(".type-range2").style.display = showRange ? "block" : "none";
+            const isClockNow = v === "clock";
+            const showRangeNow = v === "gauge" || v === "radial";
+            if(!fieldsDraft[idx].layout || true){
+              const size = defaultSizeFor(v);
+              fieldsDraft[idx].layout = { ...(fieldsDraft[idx].layout||{x:0,y:0}), w:size.w, h:size.h };
+            }
+            rowEl.querySelector(".row-ts-field").style.display = isClockNow ? "none" : "block";
+            rowEl.querySelector(".row-unit").style.display = isClockNow ? "none" : "block";
+            rowEl.querySelector(".row-alert-block").style.display = isClockNow ? "none" : "contents";
+            rowEl.querySelector(".type-range").style.display = showRangeNow ? "block" : "none";
+            rowEl.querySelector(".type-range2").style.display = showRangeNow ? "block" : "none";
           }
         });
       });
@@ -940,20 +1328,30 @@ function initApp(){
 
   document.getElementById("btnAddField").addEventListener("click", addFieldRow);
   function addFieldRow(){
+    let maxY = 0;
+    fieldsDraft.forEach(f => { if(f.layout) maxY = Math.max(maxY, f.layout.y + f.layout.h); });
+    const size = defaultSizeFor("number");
     fieldsDraft.push({
       id: "f_" + Math.random().toString(36).slice(2, 9),
       label: "ฟิลด์ใหม่", tsField: "field1", unit: "", icon: "📟", type: "number",
-      enabled: true, min: 0, max: 100, alertEnabled:false, alertLow:null, alertHigh:null
+      enabled: true, min: 0, max: 100, alertEnabled:false, alertLow:null, alertHigh:null,
+      layout: { x:0, y:maxY, w:size.w, h:size.h }
     });
     renderFieldsDraft();
     switchSettingsTab("fields");
   }
 
+  document.getElementById("btnArrangeFields").addEventListener("click", () => {
+    autoArrangeLayouts(fieldsDraft);
+    renderFieldsDraft();
+    saveMsg.innerText = "จัดเรียงใหม่แล้ว (ยังไม่บันทึก — กดบันทึกการเปลี่ยนแปลงด้านล่าง)";
+  });
+
   document.getElementById("btnSaveCfg").addEventListener("click", async () => {
     saveMsg.innerText = "กำลังบันทึก...";
     const isPublic = document.getElementById("cfgIsPublic").checked;
     const patch = {
-      station_name: document.getElementById("cfgName").value.trim() || "แดชบอร์ดของฉัน",
+      name: document.getElementById("cfgName").value.trim() || "โปรเจกต์ของฉัน",
       theme: document.getElementById("cfgTheme").value,
       background_url: document.getElementById("cfgBgUrl").value.trim(),
       thingspeak_channel: document.getElementById("cfgChannel").value.trim(),
@@ -970,6 +1368,7 @@ function initApp(){
     } else {
       pendingShareSlug = null;
       saveMsg.innerText = "บันทึกเรียบร้อย ✓";
+      renderProjectBar();
       applyTheme();
       renderGrid();
       startPolling();
