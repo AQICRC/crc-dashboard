@@ -285,6 +285,27 @@ button{ font-family:inherit; }
   </div>
 </div>
 
+<!-- ============== PASSWORD RECOVERY SCREEN ============== -->
+<div id="recoveryScreen" class="center-screen hidden">
+  <div class="panel-surface auth-box">
+    <div class="auth-logo"><div class="auth-logo-badge"><img src="CRC_Faculty-of-Engineering_Logo.png" alt="โลโก้"></div></div>
+    <div class="auth-title">ตั้งรหัสผ่านใหม่</div>
+    <div class="auth-sub">Reset Password</div>
+    <form id="recoveryForm" autocomplete="off">
+      <div class="field-group">
+        <label>รหัสผ่านใหม่</label>
+        <input type="password" id="recoveryPassword" placeholder="อย่างน้อย 6 ตัวอักษร" minlength="6" required>
+      </div>
+      <div class="field-group">
+        <label>ยืนยันรหัสผ่านใหม่</label>
+        <input type="password" id="recoveryPasswordConfirm" placeholder="พิมพ์รหัสผ่านใหม่อีกครั้ง" minlength="6" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="recoverySubmitBtn">บันทึกรหัสผ่านใหม่</button>
+    </form>
+    <div class="auth-msg" id="recoveryMsg"></div>
+  </div>
+</div>
+
 <!-- ============== MAIN APP ============== -->
 <div id="appScreen" class="container hidden">
   <div class="header">
@@ -672,7 +693,8 @@ function initApp(){
       return;
     }
     try{
-      const { error } = await sb.auth.resetPasswordForEmail(email);
+      const redirectTo = window.location.href.split("?")[0].split("#")[0];
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
       if(error) throw error;
       authMsg.innerText = "ส่งลิงก์ตั้งรหัสผ่านใหม่ไปที่อีเมลแล้ว";
       authMsg.className = "auth-msg ok";
@@ -690,9 +712,19 @@ function initApp(){
     return msg;
   }
 
+  const recoveryScreen = document.getElementById("recoveryScreen");
+
   sb.auth.onAuthStateChange((event, session) => {
+    if(event === "PASSWORD_RECOVERY"){
+      currentUser = session.user;
+      authScreen.classList.add("hidden");
+      appScreen.classList.add("hidden");
+      recoveryScreen.classList.remove("hidden");
+      return;
+    }
     if(session && session.user){
       currentUser = session.user;
+      recoveryScreen.classList.add("hidden");
       enterApp();
     } else {
       currentUser = null;
@@ -700,7 +732,38 @@ function initApp(){
       dashboard = null;
       stopPolling();
       appScreen.classList.add("hidden");
+      recoveryScreen.classList.add("hidden");
       authScreen.classList.remove("hidden");
+    }
+  });
+
+  document.getElementById("recoveryForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const p1 = document.getElementById("recoveryPassword").value;
+    const p2 = document.getElementById("recoveryPasswordConfirm").value;
+    const msgEl = document.getElementById("recoveryMsg");
+    const btn = document.getElementById("recoverySubmitBtn");
+    if(p1 !== p2){
+      msgEl.innerText = "รหัสผ่านทั้งสองช่องไม่ตรงกัน กรุณาลองใหม่";
+      msgEl.className = "auth-msg error";
+      return;
+    }
+    msgEl.innerText = "กำลังบันทึก...";
+    msgEl.className = "auth-msg";
+    btn.disabled = true;
+    try{
+      const { error } = await sb.auth.updateUser({ password: p1 });
+      if(error) throw error;
+      msgEl.innerText = "ตั้งรหัสผ่านใหม่สำเร็จ! กำลังเข้าสู่แดชบอร์ด...";
+      msgEl.className = "auth-msg ok";
+      setTimeout(() => {
+        recoveryScreen.classList.add("hidden");
+        enterApp();
+      }, 1200);
+    } catch(err){
+      msgEl.innerText = translateAuthError(err.message);
+      msgEl.className = "auth-msg error";
+      btn.disabled = false;
     }
   });
 
