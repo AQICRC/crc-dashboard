@@ -21,8 +21,7 @@
 *{ box-sizing:border-box; }
 body{
   margin:0; min-height:100vh; font-family:'IBM Plex Sans Thai', sans-serif; color:#f2f3f5;
-  background:linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); background-attachment:fixed;
-  position:relative;
+  background:linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); background-attachment:fixed; position:relative;
 }
 body::after{
   content:""; position:fixed; inset:0;
@@ -33,38 +32,42 @@ body::after{
   pointer-events:none; z-index:0;
 }
 .hidden{ display:none !important; }
-.container{ max-width:1500px; margin:auto; padding:40px; position:relative; z-index:2; }
+.container{ max-width:1600px; margin:auto; padding:40px; position:relative; z-index:2; }
 .panel-surface{ background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid var(--border); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.55); }
 .header{ display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:16px; flex-wrap:wrap; text-align:center; }
 .brand-badge{ background:#fff; border-radius:9px; padding:5px 10px; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(0,0,0,0.35); line-height:0; }
 .brand-badge img{ height:26px; width:auto; display:block; }
 .station-name{ font-size:22px; font-weight:700; background:var(--panel); border:1px solid var(--border); padding:10px 20px; border-radius:10px; }
 .public-badge{ text-align:center; font-size:11px; opacity:0.55; margin-bottom:22px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.06em; }
-.grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; }
+
+.grid{ display:grid; grid-template-columns:repeat(12, 1fr); grid-auto-rows:32px; gap:16px; position:relative; }
 .card{
   background:linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
-  border:1px solid var(--border); border-radius:14px; padding:26px; min-height:200px;
-  display:flex; flex-direction:column; justify-content:space-between; position:relative;
+  border:1px solid var(--border); border-radius:14px; padding:22px;
+  display:flex; flex-direction:column; position:relative; overflow:hidden; min-width:0; min-height:0;
 }
 .card::before, .card::after{ content:""; position:absolute; width:14px; height:14px; border-color:var(--accent); border-style:solid; opacity:0.6; pointer-events:none; }
 .card::before{ top:8px; left:8px; border-width:2px 0 0 2px; }
 .card::after{ bottom:8px; right:8px; border-width:0 2px 2px 0; }
 .card-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.card-icon{ font-size:22px; }
-.card-label{ font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; }
-.big{ font-family:'IBM Plex Mono',monospace; font-size:44px; font-weight:600; line-height:1; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
-.big .unit{ font-size:18px; font-weight:400; opacity:0.55; margin-left:6px; }
-.gauge-track{ position:relative; width:100%; height:22px; border-radius:5px; overflow:hidden; background:rgba(255,255,255,0.05);
-  background-image:repeating-linear-gradient(90deg, rgba(0,0,0,0.4) 0 1px, transparent 1px 5%); margin-top:12px; border:1px solid var(--border); }
+.card-icon{ font-size:22px; flex-shrink:0; }
+.card-label{ font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.card-body{ flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; }
+.big{ font-family:'IBM Plex Mono',monospace; font-size:40px; font-weight:600; line-height:1; letter-spacing:-0.01em; font-variant-numeric:tabular-nums; }
+.big .unit{ font-size:16px; font-weight:400; opacity:0.55; margin-left:6px; }
+.gauge-track{ position:relative; width:100%; height:20px; border-radius:5px; overflow:hidden; background:rgba(255,255,255,0.05);
+  background-image:repeating-linear-gradient(90deg, rgba(0,0,0,0.4) 0 1px, transparent 1px 5%); margin-top:10px; border:1px solid var(--border); flex-shrink:0; }
 .gauge-fill{ height:100%; background:repeating-linear-gradient(135deg, var(--accent-2) 0 8px, #17805c 8px 16px); transition:width 0.6s ease; }
-.status-row{ display:flex; align-items:center; gap:10px; }
+.radial-wrap{ display:flex; align-items:center; justify-content:center; flex:1; min-height:0; }
+.radial-wrap svg{ width:100%; height:100%; max-width:160px; max-height:160px; }
+.chart-card-wrap{ position:relative; flex:1; min-height:0; margin-top:6px; }
+.status-row{ display:flex; align-items:center; gap:10px; flex:1; }
 .led-dot{ width:13px; height:13px; border-radius:50%; background:rgba(255,255,255,0.18); flex-shrink:0; }
 .led-dot.on{ background:var(--accent-2); box-shadow:0 0 10px 3px rgba(53,224,161,0.65); }
-.status-text{ font-family:'IBM Plex Mono',monospace; font-weight:600; letter-spacing:0.06em; font-size:20px; text-transform:uppercase; }
-.chart-trigger{ position:absolute; bottom:12px; right:12px; width:34px; height:34px; border-radius:8px; background:var(--panel); border:1px solid var(--border); color:white; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.status-text{ font-family:'IBM Plex Mono',monospace; font-weight:600; letter-spacing:0.06em; font-size:18px; text-transform:uppercase; }
+.chart-trigger{ position:absolute; bottom:10px; right:10px; width:32px; height:32px; border-radius:8px; background:var(--panel); border:1px solid var(--border); color:white; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
 .chart-trigger:hover{ background:rgba(255,255,255,0.08); }
-.datetime-card #dateDisplay{ font-size:13px; opacity:0.6; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.04em; }
-.datetime-card #timeDisplay{ font-family:'IBM Plex Mono',monospace; font-size:42px; font-weight:600; margin-top:6px; }
+.datetime-card #dateDisplay{ font-size:12px; opacity:0.6; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.04em; }
 .overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,5,8,0.7); z-index:30; display:none; align-items:center; justify-content:center; padding:20px; }
 .overlay.open{ display:flex; }
 .panel{ background:#0d1319; border:1px solid var(--border); border-radius:18px; padding:24px 28px; width:640px; max-width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
@@ -74,6 +77,10 @@ body::after{
 .credit{ position:fixed; bottom:16px; right:24px; z-index:3; background:var(--panel); border:1px solid var(--border); padding:8px 18px; border-radius:20px; font-size:11px; opacity:0.7; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.04em; }
 .center-msg{ text-align:center; padding:80px 20px; }
 .center-msg .emoji{ font-size:44px; margin-bottom:14px; opacity:0.7; }
+@media(max-width:760px){
+  .grid{ display:flex !important; flex-direction:column; }
+  .grid .card{ width:100% !important; grid-column:auto !important; grid-row:auto !important; min-height:190px; }
+}
 </style>
 </head>
 <body>
@@ -81,7 +88,7 @@ body::after{
 <div class="container">
   <div id="loadingMsg" class="center-msg">
     <div class="emoji">🛰️</div>
-    <div class="mono" style="font-family:'IBM Plex Mono',monospace; font-size:13px; opacity:0.6; text-transform:uppercase; letter-spacing:0.06em;">กำลังโหลดแดชบอร์ด...</div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; opacity:0.6; text-transform:uppercase; letter-spacing:0.06em;">กำลังโหลดแดชบอร์ด...</div>
   </div>
 
   <div id="notFoundMsg" class="center-msg panel-surface hidden">
@@ -135,7 +142,7 @@ async function main(){
   }
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { data, error } = await sb.from("dashboards").select("*").eq("share_slug", slug).eq("is_public", true).maybeSingle();
+  const { data, error } = await sb.from("projects").select("*").eq("share_slug", slug).eq("is_public", true).maybeSingle();
 
   if(error || !data){
     loadingMsg.classList.add("hidden");
@@ -147,78 +154,135 @@ async function main(){
   content.classList.remove("hidden");
 
   const dashboard = data;
-  document.getElementById("stationTitle").innerText = dashboard.station_name || "แดชบอร์ด";
+  document.getElementById("stationTitle").innerText = dashboard.name || "แดชบอร์ด";
   if(dashboard.background_url){
     document.body.style.background = `url('${dashboard.background_url}') no-repeat center center fixed`;
     document.body.style.backgroundSize = "cover";
   }
 
-  function clockHTML(){
-    return `<div class="card">
-      <div class="card-head"><span class="card-icon">🕒</span><span class="card-label">วันที่ &amp; เวลา</span></div>
-      <div><div id="dateDisplay" class="datetime-card"></div><div id="timeDisplay" style="font-family:'IBM Plex Mono',monospace; font-size:42px; font-weight:600; margin-top:6px;"></div></div>
-    </div>`;
+  function applyCardStyle(cardEl, layout){
+    if(!layout) return;
+    cardEl.style.gridColumn = (layout.x + 1) + " / span " + layout.w;
+    cardEl.style.gridRow = (layout.y + 1) + " / span " + layout.h;
   }
-  function updateClock(){
-    const now = new Date();
-    const d = document.getElementById("dateDisplay");
-    const t = document.getElementById("timeDisplay");
-    if(d) d.innerText = now.toLocaleDateString("th-TH",{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    if(t) t.innerText = now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
-  }
-  setInterval(updateClock, 1000);
 
   function fieldCardHTML(f){
+    if(f.type === "clock"){
+      return `<div class="card" data-field-id="${f.id}">
+        <div class="card-head"><span class="card-icon">${f.icon||"🕒"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
+        <div class="card-body"><div id="dateDisplay-${f.id}" class="datetime-card" style="text-transform:uppercase;"></div><div id="timeDisplay-${f.id}" style="font-family:'IBM Plex Mono',monospace; font-size:38px; font-weight:600; margin-top:4px;"></div></div>
+      </div>`;
+    }
     if(f.type === "status"){
       return `<div class="card" data-field-id="${f.id}">
         <div class="card-head"><span class="card-icon">${f.icon||"⚙️"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
-        <div class="status-row"><span class="led-dot" id="led-${f.id}"></span><span class="status-text" id="val-${f.id}">--</span></div>
+        <div class="card-body status-row"><span class="led-dot" id="led-${f.id}"></span><span class="status-text" id="val-${f.id}">--</span></div>
         <button class="chart-trigger" data-chart-for="${f.id}">📈</button>
       </div>`;
     }
     if(f.type === "gauge"){
       return `<div class="card" data-field-id="${f.id}">
         <div class="card-head"><span class="card-icon">${f.icon||"📊"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
-        <div><div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div>
+        <div class="card-body"><div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div>
         <div class="gauge-track"><div class="gauge-fill" id="bar-${f.id}" style="width:0%"></div></div></div>
         <button class="chart-trigger" data-chart-for="${f.id}">📈</button>
       </div>`;
     }
+    if(f.type === "radial"){
+      return `<div class="card" data-field-id="${f.id}">
+        <div class="card-head"><span class="card-icon">${f.icon||"🎯"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
+        <div class="radial-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+            <circle id="radial-${f.id}" cx="60" cy="60" r="50" fill="none" stroke="var(--accent-2)" stroke-width="10"
+              stroke-dasharray="314.16" stroke-dashoffset="314.16" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="58" text-anchor="middle" font-family="IBM Plex Mono" font-size="22" fill="white" id="radialtext-${f.id}">--</text>
+            <text x="60" y="76" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.5)" font-family="IBM Plex Sans Thai">${escapeHtml(f.unit||"")}</text>
+          </svg>
+        </div>
+        <button class="chart-trigger" data-chart-for="${f.id}">📈</button>
+      </div>`;
+    }
+    if(f.type === "chart"){
+      return `<div class="card" data-field-id="${f.id}">
+        <div class="card-head"><span class="card-icon">${f.icon||"📈"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
+        <div class="chart-card-wrap"><canvas id="chartcard-${f.id}"></canvas></div>
+      </div>`;
+    }
     return `<div class="card" data-field-id="${f.id}">
       <div class="card-head"><span class="card-icon">${f.icon||"📟"}</span><span class="card-label">${escapeHtml(f.label)}</span></div>
-      <div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div>
+      <div class="card-body"><div class="big" id="val-${f.id}">-- <span class="unit">${escapeHtml(f.unit||"")}</span></div></div>
       <button class="chart-trigger" data-chart-for="${f.id}">📈</button>
     </div>`;
   }
 
   const fieldsGrid = document.getElementById("fieldsGrid");
+  let chartInstances = {};
+
   function renderGrid(){
     const fields = (dashboard.fields || []).filter(f => f.enabled);
-    let html = clockHTML();
     if(fields.length === 0){
-      html += `<div class="panel-surface" style="grid-column:1/-1; text-align:center; padding:50px 20px;">เจ้าของแดชบอร์ดนี้ยังไม่ได้เพิ่มการ์ดข้อมูล</div>`;
-    } else {
-      html += fields.map(fieldCardHTML).join("");
+      fieldsGrid.innerHTML = `<div class="panel-surface" style="grid-column:1/-1; text-align:center; padding:50px 20px;">เจ้าของแดชบอร์ดนี้ยังไม่ได้เพิ่มการ์ดข้อมูล</div>`;
+      return;
     }
-    fieldsGrid.innerHTML = html;
-    updateClock();
+    fieldsGrid.innerHTML = fields.map(fieldCardHTML).join("");
+    fields.forEach(f => {
+      const cardEl = fieldsGrid.querySelector(`[data-field-id="${f.id}"]`);
+      if(cardEl) applyCardStyle(cardEl, f.layout);
+    });
     fieldsGrid.querySelectorAll("[data-chart-for]").forEach(btn => {
       btn.addEventListener("click", () => openHistoryChart(btn.getAttribute("data-chart-for")));
+    });
+    updateAllClocks();
+    fields.filter(f => f.type === "chart").forEach(f => {
+      const canvas = document.getElementById("chartcard-" + f.id);
+      if(!canvas) return;
+      chartInstances[f.id] = new Chart(canvas.getContext("2d"), {
+        type: "line",
+        data: { labels: [], datasets: [{ data: [], borderColor:"#ffb020", backgroundColor:"rgba(255,176,32,0.12)", tension:0.3, pointRadius:0, borderWidth:2, fill:true }] },
+        options: { responsive:true, maintainAspectRatio:false, animation:false, plugins:{ legend:{ display:false } },
+          scales:{ x:{ display:false }, y:{ ticks:{ color:"#aab", font:{ size:10, family:"IBM Plex Mono" } }, grid:{ color:"rgba(255,255,255,0.06)" } } } }
+      });
     });
   }
   renderGrid();
 
+  function updateAllClocks(){
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("th-TH",{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    const timeStr = now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
+    (dashboard.fields || []).filter(f => f.enabled && f.type === "clock").forEach(f => {
+      const d = document.getElementById("dateDisplay-" + f.id);
+      const t = document.getElementById("timeDisplay-" + f.id);
+      if(d) d.innerText = dateStr;
+      if(t) t.innerText = timeStr;
+    });
+  }
+  setInterval(updateAllClocks, 1000);
+
   function renderFieldValue(f, value){
-    const valEl = document.getElementById("val-" + f.id);
-    if(!valEl) return;
     if(f.type === "status"){
-      const isOn = value !== null && value >= 1;
+      const valEl = document.getElementById("val-" + f.id);
       const ledEl = document.getElementById("led-" + f.id);
+      if(!valEl) return;
+      const isOn = value !== null && value >= 1;
       valEl.innerText = value === null ? "--" : (isOn ? "ทำงาน (ON)" : "ปิด (OFF)");
       valEl.style.color = isOn ? "var(--accent-2)" : "var(--text-dimmer)";
       if(ledEl) ledEl.classList.toggle("on", isOn);
       return;
     }
+    if(f.type === "radial"){
+      const circleEl = document.getElementById("radial-" + f.id);
+      const textEl = document.getElementById("radialtext-" + f.id);
+      const min = Number(f.min ?? 0), max = Number(f.max ?? 100);
+      let pct = value === null || isNaN(value) ? 0 : ((value - min) / (max - min)) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      if(circleEl) circleEl.style.strokeDashoffset = 314.16 * (1 - pct/100);
+      if(textEl) textEl.textContent = value === null || isNaN(value) ? "--" : (Number.isInteger(value) ? value : value.toFixed(1));
+      return;
+    }
+    const valEl = document.getElementById("val-" + f.id);
+    if(!valEl) return;
     const unitSpan = valEl.querySelector(".unit");
     const unitHtml = unitSpan ? unitSpan.outerHTML : `<span class="unit">${escapeHtml(f.unit||"")}</span>`;
     if(value === null || isNaN(value)){
@@ -236,6 +300,25 @@ async function main(){
     }
   }
 
+  let historyCache = null;
+  async function refreshHistoryCache(){
+    const channel = dashboard.thingspeak_channel;
+    const readKey = dashboard.thingspeak_read_key;
+    if(!channel || !readKey) return;
+    try{
+      const res = await fetch(`https://api.thingspeak.com/channels/${channel}/feeds.json?api_key=${readKey}&days=1`);
+      const data2 = await res.json();
+      historyCache = data2.feeds || [];
+      (dashboard.fields || []).filter(f => f.enabled && f.type === "chart").forEach(f => {
+        const chart = chartInstances[f.id];
+        if(!chart) return;
+        chart.data.labels = historyCache.map(x => new Date(x.created_at).toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'}));
+        chart.data.datasets[0].data = historyCache.map(x => x[f.tsField] !== null && x[f.tsField] !== undefined ? parseFloat(x[f.tsField]) : null);
+        chart.update("none");
+      });
+    } catch(err){ console.error(err); }
+  }
+
   async function fetchLiveData(){
     const channel = dashboard.thingspeak_channel;
     const readKey = dashboard.thingspeak_read_key;
@@ -244,6 +327,7 @@ async function main(){
       const res = await fetch(`https://api.thingspeak.com/channels/${channel}/feeds/last.json?api_key=${readKey}`);
       const data2 = await res.json();
       (dashboard.fields || []).filter(f => f.enabled).forEach(f => {
+        if(f.type === "clock" || f.type === "chart") return;
         const raw = data2[f.tsField];
         const value = raw === null || raw === undefined || raw === "" ? null : parseFloat(raw);
         renderFieldValue(f, value);
@@ -252,6 +336,8 @@ async function main(){
   }
   fetchLiveData();
   setInterval(fetchLiveData, 16000);
+  refreshHistoryCache();
+  setInterval(refreshHistoryCache, 60000);
 
   let historyChart = null;
   const chartOverlay = document.getElementById("chartOverlay");
@@ -267,9 +353,7 @@ async function main(){
     loadingText.innerText = "กำลังโหลดข้อมูล...";
     document.getElementById("chartTitle").innerText = `${f.icon||""} ${f.label} ย้อนหลัง 24 ชม.`;
     try{
-      const res = await fetch(`https://api.thingspeak.com/channels/${dashboard.thingspeak_channel}/feeds.json?api_key=${dashboard.thingspeak_read_key}&days=1`);
-      const data2 = await res.json();
-      const feeds = data2.feeds || [];
+      const feeds = historyCache || (await (await fetch(`https://api.thingspeak.com/channels/${dashboard.thingspeak_channel}/feeds.json?api_key=${dashboard.thingspeak_read_key}&days=1`)).json()).feeds || [];
       const labels = feeds.map(x => new Date(x.created_at).toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'}));
       const values = feeds.map(x => x[f.tsField] !== null && x[f.tsField] !== undefined ? parseFloat(x[f.tsField]) : null);
       if(historyChart) historyChart.destroy();
