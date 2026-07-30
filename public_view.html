@@ -15,12 +15,13 @@
   --border:rgba(255,255,255,0.10);
   --accent:#ffb020;
   --accent-2:#35e0a1;
-  --text-dim:rgba(255,255,255,0.62);
-  --text-dimmer:rgba(255,255,255,0.38);
+  --text-color:#f2f3f5;
+  --text-dim:color-mix(in srgb, var(--text-color) 62%, transparent);
+  --text-dimmer:color-mix(in srgb, var(--text-color) 38%, transparent);
 }
 *{ box-sizing:border-box; }
 body{
-  margin:0; min-height:100vh; font-family:'IBM Plex Sans Thai', sans-serif; color:#f2f3f5;
+  margin:0; min-height:100vh; font-family:'IBM Plex Sans Thai', sans-serif; color:var(--text-color);
   background:linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); background-attachment:fixed; position:relative;
 }
 body::after{
@@ -65,7 +66,7 @@ body::after{
 .led-dot{ width:13px; height:13px; border-radius:50%; background:rgba(255,255,255,0.18); flex-shrink:0; }
 .led-dot.on{ background:var(--accent-2); box-shadow:0 0 10px 3px rgba(53,224,161,0.65); }
 .status-text{ font-family:'IBM Plex Mono',monospace; font-weight:600; letter-spacing:0.06em; font-size:18px; text-transform:uppercase; }
-.chart-trigger{ position:absolute; bottom:10px; right:10px; width:32px; height:32px; border-radius:8px; background:var(--panel); border:1px solid var(--border); color:white; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
+.chart-trigger{ position:absolute; bottom:10px; right:10px; width:32px; height:32px; border-radius:8px; background:var(--panel); border:1px solid var(--border); color:var(--text-color); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:2; }
 .chart-trigger:hover{ background:rgba(255,255,255,0.08); }
 .datetime-card #dateDisplay{ font-size:12px; opacity:0.6; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.04em; }
 .overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,5,8,0.7); z-index:30; display:none; align-items:center; justify-content:center; padding:20px; }
@@ -155,6 +156,7 @@ async function main(){
 
   const dashboard = data;
   document.getElementById("stationTitle").innerText = dashboard.name || "แดชบอร์ด";
+  document.documentElement.style.setProperty("--text-color", dashboard.text_color || "#f2f3f5");
   if(dashboard.background_url){
     document.body.style.background = `url('${dashboard.background_url}') no-repeat center center fixed`;
     document.body.style.backgroundSize = "cover";
