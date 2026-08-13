@@ -4,122 +4,304 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>แบบคัดกรองภาวะมวลกล้ามเนื้อน้อย SARC-F / SARC-CalF</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap">
 <style>
   :root{
-    --bg:#F6F2EA;
-    --card:#FFFDF9;
-    --border:#E4DCC8;
-    --text:#2B2926;
-    --muted:#7A7263;
-    --muted2:#A69B85;
-    --green:#1F4B43;
-    --gold:#C9A15E;
-    --danger-bg:#FBEAE3;
-    --danger-text:#9A3B1E;
-    --danger:#C1502E;
-    --safe-bg:#EAF1E7;
-    --safe-text:#3F6B3F;
-    --safe:#8FAE86;
+    --navy:#0B1330;
+    --navy-700:#1E2A5E;
+    --canvas:#EEF2FB;
+    --surface:#FFFFFF;
+    --indigo:#4F46E5;
+    --indigo-dark:#372FB0;
+    --indigo-soft:#EDECFE;
+    --teal:#0D9488;
+    --teal-soft:#DFF5F2;
+    --coral:#F0522F;
+    --coral-soft:#FDE7E1;
+    --amber:#E58A00;
+    --amber-soft:#FFF1D8;
+    --border:#E1E6F3;
+    --muted:#5B6478;
+    --muted-2:#98A1B8;
+    --shadow-sm:0 1px 2px rgba(11,19,48,.05);
+    --shadow-md:0 10px 30px -14px rgba(30,42,94,.28);
   }
   *{box-sizing:border-box;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
   body{
     margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Noto Sans Thai', sans-serif;
-    padding:32px 16px 64px;
+    background:
+      radial-gradient(1100px 480px at 12% -10%, #E4E1FD 0%, transparent 60%),
+      radial-gradient(900px 420px at 100% 0%, #D8F3EF 0%, transparent 55%),
+      var(--canvas);
+    color:var(--navy);
+    font-family:'IBM Plex Sans Thai', sans-serif;
+    padding:0 0 64px;
   }
-  .wrap{max-width:680px;margin:0 auto;}
-  .eyebrow{
-    font-size:12px;letter-spacing:1.5px;color:var(--gold);font-weight:700;
-    margin-bottom:6px;text-transform:uppercase;
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    background:linear-gradient(135deg, var(--navy-700), var(--navy) 70%);
+    color:#fff;
+    box-shadow:0 8px 24px -12px rgba(11,19,48,.5);
   }
+  .topbar-inner{
+    max-width:760px;margin:0 auto;padding:16px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:38px;height:38px;border-radius:11px;flex-shrink:0;
+    background:linear-gradient(155deg, var(--indigo), #7C74F5);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 14px -4px rgba(79,70,229,.6);
+  }
+  .brand-text{display:flex;flex-direction:column;line-height:1.25;}
+  .brand-name{font-weight:700;font-size:15.5px;letter-spacing:.2px;}
+  .brand-sub{font-size:11.5px;color:#B9C0E0;}
+  .badge-proto{
+    font-size:11px;font-weight:600;color:#DCE0FF;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);padding:5px 11px;border-radius:999px;white-space:nowrap;
+  }
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- Page intro ---------- */
+  .intro{padding:28px 0 6px;}
   h1{
-    font-family:'Noto Serif Thai', serif;
-    font-size:30px;font-weight:700;color:var(--green);margin:0;line-height:1.3;
+    font-family:'IBM Plex Sans Thai', sans-serif;
+    font-size:28px;font-weight:700;color:var(--navy);margin:0;line-height:1.32;
+    letter-spacing:-.2px;
   }
-  .subtitle{color:var(--muted);font-size:14px;margin-top:8px;}
-  .summary{display:flex;gap:12px;margin:24px 0;}
+  .subtitle{color:var(--muted);font-size:14.5px;margin-top:10px;line-height:1.65;max-width:60ch;}
+
+  /* ---------- Summary cards ---------- */
+  .summary{display:flex;gap:14px;margin:26px 0;}
   .summary-card{
-    flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;
+    flex:1;background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:16px 16px 15px;box-shadow:var(--shadow-sm);
+    display:flex;flex-direction:column;gap:10px;
   }
-  .summary-num{font-size:22px;font-weight:700;margin-top:6px;}
-  .summary-label{font-size:11.5px;color:var(--muted2);margin-top:2px;}
-  .summary-num.loading{color:var(--muted2);font-size:13px;font-weight:600;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
-  .row{display:flex;gap:12px;margin-bottom:20px;}
-  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;}
+  .stat-icon{
+    width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  }
+  .stat-icon svg{width:18px;height:18px;}
+  .summary-card.c-total .stat-icon{background:var(--indigo-soft);color:var(--indigo);}
+  .summary-card.c-risk .stat-icon{background:var(--coral-soft);color:var(--coral);}
+  .summary-card.c-pct .stat-icon{background:var(--teal-soft);color:var(--teal);}
+  .summary-num{font-family:'IBM Plex Mono', monospace;font-size:23px;font-weight:700;color:var(--navy);}
+  .summary-label{font-size:11.5px;color:var(--muted-2);font-weight:500;}
+  .summary-num.loading{color:var(--muted-2);font-size:13px;font-weight:600;font-family:'IBM Plex Sans Thai', sans-serif;}
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px;
+    box-shadow:var(--shadow-md);position:relative;
+  }
+  .card-kicker{
+    display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--indigo);
+    text-transform:uppercase;letter-spacing:.6px;margin-bottom:18px;
+  }
+  .card-kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--indigo);}
+
+  .row{display:flex;gap:12px;margin-bottom:22px;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;}
   input,select{
-    width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);
-    background:var(--card);font-size:13.5px;font-family:'Noto Sans Thai', sans-serif;color:var(--text);
+    width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);
+    background:#FBFCFF;font-size:13.5px;font-family:'IBM Plex Sans Thai', sans-serif;color:var(--navy);
+    transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .q-block{margin-bottom:20px;}
-  .q-head{display:flex;gap:10px;align-items:baseline;}
-  .q-no{font-family:'Noto Serif Thai', serif;font-weight:700;color:var(--gold);font-size:13px;}
-  .q-label{font-weight:600;font-size:15px;}
-  .q-hint{font-size:12px;color:var(--muted2);margin-top:2px;}
-  .q-options{display:flex;gap:8px;margin-top:10px;margin-left:26px;flex-wrap:wrap;}
+  input:focus,select:focus{
+    outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-soft);
+  }
+
+  /* ---------- Questions ---------- */
+  .q-block{margin-bottom:22px;padding-bottom:22px;border-bottom:1px dashed var(--border);}
+  .q-block:last-of-type{border-bottom:none;padding-bottom:0;}
+  .q-head{display:flex;gap:12px;align-items:flex-start;}
+  .q-no{
+    font-family:'IBM Plex Mono', monospace;font-weight:700;color:#fff;font-size:12px;
+    width:26px;height:26px;border-radius:8px;flex-shrink:0;
+    background:linear-gradient(155deg, var(--indigo), var(--indigo-dark));
+    display:flex;align-items:center;justify-content:center;
+  }
+  .q-label{font-weight:600;font-size:15px;color:var(--navy);}
+  .q-hint{font-size:12px;color:var(--muted-2);margin-top:2px;}
+  .q-options{display:flex;gap:8px;margin-top:12px;margin-left:38px;flex-wrap:wrap;}
   .q-opt{
-    flex:1;min-width:110px;text-align:left;padding:8px 10px;border-radius:8px;
-    border:1px solid var(--border);background:var(--card);color:var(--text);
-    font-size:12.5px;font-family:'Noto Sans Thai', sans-serif;cursor:pointer;transition:all .15s ease;
+    flex:1;min-width:110px;text-align:left;padding:9px 11px;border-radius:10px;
+    border:1.5px solid var(--border);background:#FBFCFF;color:var(--navy);
+    font-size:12.5px;font-family:'IBM Plex Sans Thai', sans-serif;cursor:pointer;transition:all .15s ease;
   }
-  .q-opt.active{border:1.5px solid var(--green);background:var(--green);color:var(--card);}
-  .q-opt .pts{opacity:.6;font-size:11px;}
-  #riskSection{display:none;margin-top:18px;}
-  .gauge-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.3px;}
-  .gauge-track{position:relative;height:14px;border-radius:8px;background:#EFE7D4;overflow:hidden;border:1px solid var(--border);}
-  .gauge-zone-safe{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#8FAE86,#C9A15E);}
-  .gauge-zone-danger{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(90deg,#D98A56,#C1502E);}
-  .gauge-dot{position:absolute;top:-3px;width:20px;height:20px;border-radius:50%;background:var(--text);border:3px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.35);transition:left .25s ease;}
-  .gauge-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-top:4px;}
-  #riskBanner{margin-top:16px;padding:10px 14px;border-radius:10px;display:none;align-items:center;gap:8px;font-size:13.5px;font-weight:600;}
-  #extraFields{display:none;margin-top:18px;padding-top:18px;border-top:1px dashed var(--border);}
+  .q-opt:hover{border-color:#C7CEEE;background:var(--indigo-soft);}
+  .q-opt.active{border-color:var(--indigo);background:var(--indigo);color:#fff;box-shadow:var(--shadow-sm);}
+  .q-opt .pts{opacity:.65;font-size:11px;}
+
+  .calf-field{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;
+  }
+  .calf-field label{margin-bottom:0;display:flex;align-items:center;gap:6px;}
+  .calf-field input{width:160px;}
+  .calf-hint{font-size:11.5px;color:var(--amber);font-weight:600;}
+
+  /* ---------- Gauge (signature element) ---------- */
+  #riskSection{display:none;margin-top:24px;}
+  .gauge-card{
+    background:linear-gradient(180deg, #FAFBFF, #F4F6FE);
+    border:1px solid var(--border);border-radius:16px;padding:18px 18px 14px;
+  }
+  .gauge-labels{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.2px;}
+  .gauge-labels span:first-child{font-weight:600;color:var(--navy);}
+  #gaugeScoreText{font-family:'IBM Plex Mono', monospace;font-weight:700;color:var(--navy);font-size:14px;}
+  .gauge-track{position:relative;height:16px;border-radius:9px;background:#E7EAF6;overflow:hidden;box-shadow:inset 0 1px 3px rgba(11,19,48,.12);}
+  .gauge-zone-safe{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#0D9488,#3FBFB0);}
+  .gauge-zone-danger{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(90deg,#F0522F,#FF7A54);}
+  .gauge-dot{
+    position:absolute;top:-4px;width:24px;height:24px;border-radius:50%;background:var(--navy);
+    border:3px solid #fff;box-shadow:0 2px 8px rgba(11,19,48,.45);transition:left .3s cubic-bezier(.4,0,.2,1);
+  }
+  .gauge-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted-2);margin-top:6px;font-family:'IBM Plex Mono', monospace;}
+
+  #riskBanner{
+    margin-top:18px;padding:13px 16px;border-radius:14px;display:none;align-items:center;gap:10px;
+    font-size:13.5px;font-weight:600;border:1px solid transparent;
+  }
+
+  #extraFields{
+    display:none;margin-top:20px;padding:18px;border-radius:14px;
+    background:var(--amber-soft);border:1px solid #F3D9A6;
+  }
   #extraFields .row{margin-bottom:16px;}
-  #errorMsg{color:var(--danger);font-size:13px;margin-top:10px;display:none;}
-  #configWarning{color:var(--danger);font-size:12.5px;margin-top:10px;display:none;background:var(--danger-bg);padding:10px 12px;border-radius:8px;}
-  #syncNote{font-size:12px;color:var(--muted2);margin-top:8px;display:none;}
-  #syncNote.err{color:var(--danger);}
+  #extraFields .row:last-child{margin-bottom:0;}
+  #extraFields > div:first-child{
+    font-weight:700;color:#8A5900;font-size:13.5px;margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+
+  #errorMsg{color:var(--coral);font-size:13px;margin-top:12px;display:none;font-weight:600;}
+  #configWarning{
+    color:#8A3B22;font-size:12.5px;margin-top:12px;display:none;background:var(--coral-soft);
+    padding:12px 14px;border-radius:12px;border:1px solid #F3C1B0;
+  }
+
   button.save{
-    margin-top:20px;width:100%;padding:12px 0;border-radius:10px;border:none;
-    background:#D9D2C0;color:var(--card);font-weight:700;font-size:14.5px;cursor:not-allowed;
-    font-family:'Noto Sans Thai', sans-serif;
+    margin-top:24px;width:100%;padding:14px 0;border-radius:12px;border:none;
+    background:#D9DCEC;color:#fff;font-weight:700;font-size:14.5px;cursor:not-allowed;
+    font-family:'IBM Plex Sans Thai', sans-serif;transition:transform .12s ease, box-shadow .12s ease, background .2s ease;
   }
-  button.save.enabled{background:var(--green);cursor:pointer;}
-  .records-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-  h2.records-title{font-family:'Noto Serif Thai', serif;font-size:18px;color:var(--green);margin:0;}
+  button.save.enabled{
+    background:linear-gradient(135deg, var(--indigo), var(--indigo-dark));cursor:pointer;
+    box-shadow:0 10px 24px -10px rgba(79,70,229,.55);
+  }
+  button.save.enabled:hover{transform:translateY(-1px);box-shadow:0 14px 28px -10px rgba(79,70,229,.65);}
+  button.save.enabled:active{transform:translateY(0);}
+
+  /* ---------- Records ---------- */
+  .records-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:36px;}
+  h2.records-title{font-family:'IBM Plex Sans Thai', sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin:0;}
+  h2.records-title span{font-family:'IBM Plex Mono', monospace;color:var(--indigo);}
   .refresh-btn{
-    border:1px solid var(--border);background:var(--card);color:var(--green);
-    font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;
-    font-family:'Noto Sans Thai', sans-serif;
+    border:1.5px solid var(--border);background:var(--surface);color:var(--indigo-dark);
+    font-size:12px;font-weight:600;padding:7px 13px;border-radius:10px;cursor:pointer;
+    font-family:'IBM Plex Sans Thai', sans-serif;transition:all .15s ease;
   }
+  .refresh-btn:hover:not(:disabled){border-color:var(--indigo);background:var(--indigo-soft);}
   .refresh-btn:disabled{opacity:.5;cursor:default;}
-  .empty{padding:20px;text-align:center;color:var(--muted2);font-size:13px;background:var(--card);border-radius:12px;border:1px dashed var(--border);}
-  .record-row{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;}
-  .record-code{font-weight:600;font-size:14px;}
-  .record-meta{font-size:12px;color:var(--muted2);}
-  .badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;}
-  .badge.risk{background:var(--danger-bg);color:var(--danger-text);}
-  .badge.safe{background:var(--safe-bg);color:var(--safe-text);}
-  .more-note{font-size:11.5px;color:var(--muted2);text-align:center;margin-top:4px;}
-  .footnote{margin-top:28px;font-size:11.5px;color:var(--muted2);line-height:1.6;}
-  .calf-hint{font-size:11.5px;color:var(--muted2);margin-left:10px;}
+
+  #syncNote{font-size:12px;color:var(--muted-2);margin-bottom:10px;display:none;}
+  #syncNote.err{color:var(--coral);}
+
+  .empty{
+    padding:26px;text-align:center;color:var(--muted-2);font-size:13px;background:var(--surface);
+    border-radius:16px;border:1.5px dashed var(--border);
+  }
+  .record-row{
+    display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:var(--shadow-sm);
+    animation:rowIn .25s ease both;
+  }
+  @keyframes rowIn{from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:none;}}
+  .record-avatar{
+    width:36px;height:36px;border-radius:10px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;
+    background:linear-gradient(155deg, var(--indigo), #7C74F5);
+  }
+  .record-body{flex:1;min-width:0;}
+  .record-code{font-weight:600;font-size:14px;color:var(--navy);}
+  .record-meta{font-size:12px;color:var(--muted-2);margin-top:1px;}
+  .badge{
+    font-family:'IBM Plex Mono', monospace;font-size:12px;font-weight:700;padding:5px 11px;
+    border-radius:999px;white-space:nowrap;
+  }
+  .badge.risk{background:var(--coral-soft);color:#B23A20;}
+  .badge.safe{background:var(--teal-soft);color:#0A6E64;}
+  .more-note{font-size:11.5px;color:var(--muted-2);text-align:center;margin-top:8px;}
+
+  .footnote{
+    margin-top:32px;font-size:11.5px;color:var(--muted-2);line-height:1.7;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;
+  }
 </style>
 </head>
 <body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 15v-2a2 2 0 0 1 2-2h1"/>
+          <path d="M20 15v-2a2 2 0 0 0-2-2h-1"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <path d="M4 15h16v2a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-2Z"/>
+          <path d="M9 15v2M15 15v2"/>
+        </svg>
+      </span>
+      <div class="brand-text">
+        <span class="brand-name">SarcoScreen</span>
+        <span class="brand-sub">แพลตฟอร์มคัดกรองมวลกล้ามเนื้อน้อยในผู้สูงอายุ</span>
+      </div>
+    </div>
+    <span class="badge-proto">ต้นแบบวิจัย thanatchanok</span>
+  </div>
+</div>
+
 <div class="wrap">
-  <div class="eyebrow">เครื่องมือคัดกรอง · ต้นแบบวิจัย</div>
-  <h1>แบบคัดกรองภาวะมวลกล้ามเนื้อน้อย<br>SARC-F / SARC-CalF</h1>
-  <p class="subtitle">กรอกข้อมูลผู้สูงอายุแต่ละราย ระบบจะคำนวณคะแนนและระดับความเสี่ยงให้อัตโนมัติ หากเข้าเกณฑ์เสี่ยงจะขอข้อมูลการทดสอบเพิ่มเติม (Hand grip / BIA) ก่อนบันทึกลง Google Sheet</p>
+  <div class="intro">
+    <h1>แบบคัดกรองภาวะมวลกล้ามเนื้อน้อย<br>SARC-F / SARC-CalF</h1>
+    <p class="subtitle">กรอกข้อมูลผู้สูงอายุแต่ละราย ระบบจะคำนวณคะแนนและระดับความเสี่ยงให้อัตโนมัติ หากเข้าเกณฑ์เสี่ยงจะขอข้อมูลการทดสอบเพิ่มเติม (Hand grip / BIA) ก่อนบันทึกลง Google Sheet</p>
+  </div>
 
   <div class="summary">
-    <div class="summary-card"><div>👥</div><div class="summary-num" id="totalCount">–</div><div class="summary-label">รายที่คัดกรองแล้ว</div></div>
-    <div class="summary-card"><div>⚠️</div><div class="summary-num" id="riskCount" style="color:var(--danger)">–</div><div class="summary-label">เข้าเกณฑ์เสี่ยง</div></div>
-    <div class="summary-card"><div>📋</div><div class="summary-num" id="riskPct">–</div><div class="summary-label">สัดส่วนกลุ่มเสี่ยง</div></div>
+    <div class="summary-card c-total">
+      <span class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </span>
+      <div class="summary-num" id="totalCount">–</div>
+      <div class="summary-label">รายที่คัดกรองแล้ว</div>
+    </div>
+    <div class="summary-card c-risk">
+      <span class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
+      <div class="summary-num" id="riskCount">–</div>
+      <div class="summary-label">เข้าเกณฑ์เสี่ยง</div>
+    </div>
+    <div class="summary-card c-pct">
+      <span class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      </span>
+      <div class="summary-num" id="riskPct">–</div>
+      <div class="summary-label">สัดส่วนกลุ่มเสี่ยง</div>
+    </div>
   </div>
 
   <div class="card">
+    <div class="card-kicker">ข้อมูลผู้เข้ารับการคัดกรอง</div>
     <div class="row">
       <div style="flex:1">
         <label>รหัสผู้เข้ารับการคัดกรอง</label>
@@ -128,7 +310,7 @@
       <div style="width:100px">
         <label>อายุ</label>
         <input id="ageInput" placeholder="ปี" inputmode="numeric" />
-        <div id="ageHint" style="font-size:10.5px;color:var(--muted2);margin-top:3px;">ขั้นต่ำ 50 ปี</div>
+        <div id="ageHint" style="font-size:10.5px;color:var(--muted-2);margin-top:4px;">ขั้นต่ำ 50 ปี</div>
       </div>
       <div style="width:130px">
         <label>เพศ</label>
@@ -140,37 +322,38 @@
       </div>
     </div>
 
+    <div class="card-kicker" style="margin-top:4px;">แบบประเมิน SARC-F</div>
     <div id="questionsContainer"></div>
 
-    <div style="margin-bottom:8px">
+    <div class="calf-field">
       <label>📏 เส้นรอบวงน่อง (ซม.) — ไม่บังคับ</label>
-      <input id="calfInput" placeholder="เช่น 31.5" style="width:160px" />
+      <input id="calfInput" placeholder="เช่น 31.5" />
       <span class="calf-hint" id="calfHint"></span>
     </div>
 
     <div id="riskSection">
-      <div class="gauge-labels">
-        <span id="gaugeLabel">คะแนน SARC-F</span>
-        <span id="gaugeScoreText" style="font-weight:700;color:var(--text)">0 / 10</span>
-      </div>
-      <div class="gauge-track">
-        <div class="gauge-zone-safe" id="gaugeSafeZone"></div>
-        <div class="gauge-zone-danger" id="gaugeDangerZone"></div>
-        <div class="gauge-dot" id="gaugeDot"></div>
-      </div>
-      <div class="gauge-ticks">
-        <span>0</span>
-        <span id="gaugeMidTick"></span>
-        <span id="gaugeMaxTick">10</span>
+      <div class="gauge-card">
+        <div class="gauge-labels">
+          <span id="gaugeLabel">คะแนน SARC-F</span>
+          <span id="gaugeScoreText">0 / 10</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-zone-safe" id="gaugeSafeZone"></div>
+          <div class="gauge-zone-danger" id="gaugeDangerZone"></div>
+          <div class="gauge-dot" id="gaugeDot"></div>
+        </div>
+        <div class="gauge-ticks">
+          <span>0</span>
+          <span id="gaugeMidTick"></span>
+          <span id="gaugeMaxTick">10</span>
+        </div>
       </div>
     </div>
 
     <div id="riskBanner"></div>
 
     <div id="extraFields">
-      <div style="font-weight:700;color:var(--danger-text);font-size:13.5px;margin-bottom:12px;">
-        ⚠️ เข้าเกณฑ์เสี่ยง — กรุณากรอกผลการทดสอบเพิ่มเติมก่อนบันทึก
-      </div>
+      <div>⚠️ เข้าเกณฑ์เสี่ยง — กรุณากรอกผลการทดสอบเพิ่มเติมก่อนบันทึก</div>
       <div class="row">
         <div style="flex:1">
           <label>ความแข็งแรงกล้ามเนื้อ Hand grip (กิโลกรัม)</label>
@@ -192,14 +375,12 @@
     <button class="save" id="saveBtn">บันทึกผลการคัดกรอง</button>
   </div>
 
-  <div style="margin-top:32px">
-    <div class="records-head">
-      <h2 class="records-title">รายการที่บันทึกไว้ (<span id="recordsCountTitle">0</span>)</h2>
-      <button class="refresh-btn" id="refreshBtn">↻ รีเฟรช</button>
-    </div>
-    <div id="syncNote"></div>
-    <div id="recordsList"><div class="empty">ยังไม่มีข้อมูล เริ่มกรอกแบบฟอร์มด้านบนได้เลย</div></div>
+  <div class="records-head">
+    <h2 class="records-title">รายการที่บันทึกไว้ (<span id="recordsCountTitle">0</span>)</h2>
+    <button class="refresh-btn" id="refreshBtn">↻ รีเฟรช</button>
   </div>
+  <div id="syncNote"></div>
+  <div id="recordsList"><div class="empty">ยังไม่มีข้อมูล เริ่มกรอกแบบฟอร์มด้านบนได้เลย</div></div>
 
   <div class="footnote">
     หมายเหตุ: ต้นแบบนี้ใช้เกณฑ์ SARC-CalF มาตรฐาน (คะแนนรวม ≥ 11 = เสี่ยง เมื่อมีค่ารอบวงน่อง) หรือ SARC-F เพียงอย่างเดียว
@@ -353,13 +534,15 @@ function recalc(){
 
   riskBanner.style.display = "flex";
   if (info.risk){
-    riskBanner.style.background = "var(--danger-bg)";
-    riskBanner.style.color = "var(--danger-text)";
+    riskBanner.style.background = "var(--coral-soft)";
+    riskBanner.style.color = "#B23A20";
+    riskBanner.style.borderColor = "#F3C1B0";
     riskBanner.innerHTML = "⚠️ เข้าเกณฑ์เสี่ยงภาวะ Sarcopenia — ควรส่งต่อเพื่อประเมินเพิ่มเติม";
     extraFields.style.display = "block";
   } else {
-    riskBanner.style.background = "var(--safe-bg)";
-    riskBanner.style.color = "var(--safe-text)";
+    riskBanner.style.background = "var(--teal-soft)";
+    riskBanner.style.color = "#0A6E64";
+    riskBanner.style.borderColor = "#BFE7E1";
     riskBanner.innerHTML = "✅ ไม่เข้าเกณฑ์เสี่ยงในขณะนี้";
     extraFields.style.display = "none";
   }
@@ -417,6 +600,14 @@ function setSummaryLoading(isLoading){
   }
 }
 
+function initials(code){
+  if (!code) return "?";
+  const trimmed = code.trim();
+  const parts = trimmed.split(/[\s-]+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return trimmed.slice(0,2).toUpperCase();
+}
+
 function renderRecords(){
   const list = document.getElementById("recordsList");
 
@@ -438,7 +629,8 @@ function renderRecords(){
 
   list.innerHTML = visible.map(r => `
     <div class="record-row">
-      <div>
+      <div class="record-avatar">${initials(r.code)}</div>
+      <div class="record-body">
         <div class="record-code">${r.code}</div>
         <div class="record-meta">อายุ ${r.age} · ${r.sexLabel} · ${r.date ? new Date(r.date).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"2-digit"}) : "-"}</div>
       </div>
@@ -489,7 +681,7 @@ function resetForm(){
   document.getElementById("codeInput").value = "";
   document.getElementById("ageInput").value = "";
   document.getElementById("ageHint").textContent = "ขั้นต่ำ 50 ปี";
-  document.getElementById("ageHint").style.color = "var(--muted2)";
+  document.getElementById("ageHint").style.color = "var(--muted-2)";
   document.getElementById("sexInput").value = "";
   document.getElementById("calfInput").value = "";
   document.getElementById("handGripInput").value = "";
@@ -561,7 +753,7 @@ function setupAgeInput(){
     // digits only
     ageInput.value = ageInput.value.replace(/[^0-9]/g, "");
     ageHint.textContent = `ขั้นต่ำ ${MIN_AGE} ปี`;
-    ageHint.style.color = "var(--muted2)";
+    ageHint.style.color = "var(--muted-2)";
     recalc();
   });
 
@@ -571,7 +763,7 @@ function setupAgeInput(){
     if (!isNaN(val) && val < MIN_AGE){
       ageInput.value = String(MIN_AGE);
       ageHint.textContent = `กรอกได้ตั้งแต่ ${MIN_AGE} ปีขึ้นไป — ปรับเป็น ${MIN_AGE} ปีให้แล้ว`;
-      ageHint.style.color = "var(--danger)";
+      ageHint.style.color = "var(--coral)";
       recalc();
     }
   });
