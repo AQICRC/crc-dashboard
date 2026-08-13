@@ -102,6 +102,7 @@
   .badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;}
   .badge.risk{background:var(--danger-bg);color:var(--danger-text);}
   .badge.safe{background:var(--safe-bg);color:var(--safe-text);}
+  .more-note{font-size:11.5px;color:var(--muted2);text-align:center;margin-top:4px;}
   .footnote{margin-top:28px;font-size:11.5px;color:var(--muted2);line-height:1.6;}
   .calf-hint{font-size:11.5px;color:var(--muted2);margin-left:10px;}
 </style>
@@ -109,7 +110,7 @@
 <body>
 <div class="wrap">
   <div class="eyebrow">เครื่องมือคัดกรอง · ต้นแบบวิจัย</div>
-  <h1>แบบคัดกรองภาวะกล้ามเนื้อน้อย<br>SARC-F / SARC-CalF</h1>
+  <h1>แบบคัดกรองภาวะมวลกล้ามเนื้อน้อย<br>SARC-F / SARC-CalF</h1>
   <p class="subtitle">กรอกข้อมูลผู้สูงอายุแต่ละราย ระบบจะคำนวณคะแนนและระดับความเสี่ยงให้อัตโนมัติ หากเข้าเกณฑ์เสี่ยงจะขอข้อมูลการทดสอบเพิ่มเติม (Hand grip / BIA) ก่อนบันทึกลง Google Sheet</p>
 
   <div class="summary">
@@ -204,7 +205,7 @@
     หมายเหตุ: ต้นแบบนี้ใช้เกณฑ์ SARC-CalF มาตรฐาน (คะแนนรวม ≥ 11 = เสี่ยง เมื่อมีค่ารอบวงน่อง) หรือ SARC-F เพียงอย่างเดียว
     (คะแนนรวม ≥ 4 = เสี่ยง เมื่อไม่มีค่ารอบวงน่อง) เมื่อเข้าเกณฑ์เสี่ยง ระบบจะขอผล Hand grip strength และ BIA muscle mass
     เพิ่มเติมตามแนวทาง AWGS ก่อนบันทึก ข้อมูลทั้งหมดจะถูกส่งไปยัง Google Sheet ที่ตั้งค่าไว้ และรายการสรุปด้านบนจะดึงข้อมูลสด
-    จาก Google Sheet ทุกครั้งที่เปิดหน้านี้ หรือกดปุ่ม "รีเฟรชจาก Sheet"
+    จาก Google Sheet ทุกครั้งที่เปิดหน้านี้ หรือกดปุ่ม "รีเฟรช"
     ควรตรวจสอบความถูกต้องกับเกณฑ์วินิจฉัยจริงก่อนนำไปใช้ทางคลินิก
   </div>
 </div>
@@ -236,15 +237,12 @@
      });
      return ContentService.createTextOutput(JSON.stringify(rows)).setMimeType(ContentService.MimeType.JSON);
    }
-
-   Note: doGet(e) with a live "Records" sheet will now return each saved
-   row keyed by the exact Thai column headers already used in HEADERS,
-   e.g. "Timestamp", "รหัสผู้เข้ารับการคัดกรอง", "อายุ", "เพศ",
-   "คะแนนรวม", "ประเภทคะแนน", "สถานะความเสี่ยง", etc. — the front-end
-   below reads those exact keys.
    --------------------------------------------------------------------
 ====================================================== */
 const GAS_URL = "https://script.google.com/macros/s/AKfycbznmzRpJ1zyc1J4SJzlKdLGAJAsfzbWcDAtJUUN_AJ24t0lTOwmeUmZ6VG709q2CfTA/exec";
+
+// How many of the most recent records to show in the list below the form.
+const RECORDS_TO_SHOW = 5;
 
 const QUESTIONS = [
   { id:"strength", no:"01", label:"การยกและถือของหนักประมาณ 4.5 กก.", hint:"เช่น ถุงข้าวสาร ถังน้ำ",
@@ -421,6 +419,8 @@ function setSummaryLoading(isLoading){
 
 function renderRecords(){
   const list = document.getElementById("recordsList");
+
+  // Summary counts always reflect ALL records, not just the ones shown below.
   document.getElementById("totalCount").textContent = state.records.length;
   const riskCount = state.records.filter(r=>r.risk).length;
   document.getElementById("riskCount").textContent = riskCount;
@@ -431,7 +431,12 @@ function renderRecords(){
     list.innerHTML = `<div class="empty">ยังไม่มีข้อมูล เริ่มกรอกแบบฟอร์มด้านบนได้เลย</div>`;
     return;
   }
-  list.innerHTML = state.records.map(r => `
+
+  // Only show the most recent N records in the list itself.
+  const visible = state.records.slice(0, RECORDS_TO_SHOW);
+  const remaining = state.records.length - visible.length;
+
+  list.innerHTML = visible.map(r => `
     <div class="record-row">
       <div>
         <div class="record-code">${r.code}</div>
@@ -439,7 +444,7 @@ function renderRecords(){
       </div>
       <span class="badge ${r.risk ? "risk" : "safe"}">${r.scoreLabel} ${r.total}</span>
     </div>
-  `).join("");
+  `).join("") + (remaining > 0 ? `<div class="more-note">แสดง ${visible.length} รายการล่าสุด จากทั้งหมด ${state.records.length} รายการ</div>` : "");
 }
 
 // Fetch existing records from the Google Sheet via the Apps Script Web App (doGet).
