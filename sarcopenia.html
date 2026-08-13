@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>แบบคัดกรองภาวะกล้ามเนื้อพร่อง SARC-F / SARC-CalF</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#F6F2EA;
+    --card:#FFFDF9;
+    --border:#E4DCC8;
+    --text:#2B2926;
+    --muted:#7A7263;
+    --muted2:#A69B85;
+    --green:#1F4B43;
+    --gold:#C9A15E;
+    --danger-bg:#FBEAE3;
+    --danger-text:#9A3B1E;
+    --danger:#C1502E;
+    --safe-bg:#EAF1E7;
+    --safe-text:#3F6B3F;
+    --safe:#8FAE86;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Noto Sans Thai', sans-serif;
+    padding:32px 16px 64px;
+  }
+  .wrap{max-width:680px;margin:0 auto;}
+  .eyebrow{
+    font-size:12px;letter-spacing:1.5px;color:var(--gold);font-weight:700;
+    margin-bottom:6px;text-transform:uppercase;
+  }
+  h1{
+    font-family:'Noto Serif Thai', serif;
+    font-size:30px;font-weight:700;color:var(--green);margin:0;line-height:1.3;
+  }
+  .subtitle{color:var(--muted);font-size:14px;margin-top:8px;}
+  .summary{display:flex;gap:12px;margin:24px 0;}
+  .summary-card{
+    flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;
+  }
+  .summary-num{font-size:22px;font-weight:700;margin-top:6px;}
+  .summary-label{font-size:11.5px;color:var(--muted2);margin-top:2px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
+  .row{display:flex;gap:12px;margin-bottom:20px;}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;}
+  input,select{
+    width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);
+    background:var(--card);font-size:13.5px;font-family:'Noto Sans Thai', sans-serif;color:var(--text);
+  }
+  .q-block{margin-bottom:20px;}
+  .q-head{display:flex;gap:10px;align-items:baseline;}
+  .q-no{font-family:'Noto Serif Thai', serif;font-weight:700;color:var(--gold);font-size:13px;}
+  .q-label{font-weight:600;font-size:15px;}
+  .q-hint{font-size:12px;color:var(--muted2);margin-top:2px;}
+  .q-options{display:flex;gap:8px;margin-top:10px;margin-left:26px;flex-wrap:wrap;}
+  .q-opt{
+    flex:1;min-width:110px;text-align:left;padding:8px 10px;border-radius:8px;
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    font-size:12.5px;font-family:'Noto Sans Thai', sans-serif;cursor:pointer;transition:all .15s ease;
+  }
+  .q-opt.active{border:1.5px solid var(--green);background:var(--green);color:var(--card);}
+  .q-opt .pts{opacity:.6;font-size:11px;}
+  #riskSection{display:none;margin-top:18px;}
+  .gauge-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.3px;}
+  .gauge-track{position:relative;height:14px;border-radius:8px;background:#EFE7D4;overflow:hidden;border:1px solid var(--border);}
+  .gauge-zone-safe{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#8FAE86,#C9A15E);}
+  .gauge-zone-danger{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(90deg,#D98A56,#C1502E);}
+  .gauge-dot{position:absolute;top:-3px;width:20px;height:20px;border-radius:50%;background:var(--text);border:3px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.35);transition:left .25s ease;}
+  .gauge-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-top:4px;}
+  #riskBanner{margin-top:16px;padding:10px 14px;border-radius:10px;display:none;align-items:center;gap:8px;font-size:13.5px;font-weight:600;}
+  #extraFields{display:none;margin-top:18px;padding-top:18px;border-top:1px dashed var(--border);}
+  #extraFields .row{margin-bottom:16px;}
+  #errorMsg{color:var(--danger);font-size:13px;margin-top:10px;display:none;}
+  #configWarning{color:var(--danger);font-size:12.5px;margin-top:10px;display:none;background:var(--danger-bg);padding:10px 12px;border-radius:8px;}
+  button.save{
+    margin-top:20px;width:100%;padding:12px 0;border-radius:10px;border:none;
+    background:#D9D2C0;color:var(--card);font-weight:700;font-size:14.5px;cursor:not-allowed;
+    font-family:'Noto Sans Thai', sans-serif;
+  }
+  button.save.enabled{background:var(--green);cursor:pointer;}
+  h2.records-title{font-family:'Noto Serif Thai', serif;font-size:18px;color:var(--green);margin-bottom:12px;}
+  .empty{padding:20px;text-align:center;color:var(--muted2);font-size:13px;background:var(--card);border-radius:12px;border:1px dashed var(--border);}
+  .record-row{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;}
+  .record-code{font-weight:600;font-size:14px;}
+  .record-meta{font-size:12px;color:var(--muted2);}
+  .badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;}
+  .badge.risk{background:var(--danger-bg);color:var(--danger-text);}
+  .badge.safe{background:var(--safe-bg);color:var(--safe-text);}
+  .footnote{margin-top:28px;font-size:11.5px;color:var(--muted2);line-height:1.6;}
+  .calf-hint{font-size:11.5px;color:var(--muted2);margin-left:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">เครื่องมือคัดกรอง · ต้นแบบวิจัย</div>
+  <h1>แบบคัดกรองภาวะกล้ามเนื้อพร่อง<br>SARC-F / SARC-CalF</h1>
+  <p class="subtitle">กรอกข้อมูลผู้สูงอายุแต่ละราย ระบบจะคำนวณคะแนนและระดับความเสี่ยงให้อัตโนมัติ หากเข้าเกณฑ์เสี่ยงจะขอข้อมูลการทดสอบเพิ่มเติม (Hand grip / BIA) ก่อนบันทึกลง Google Sheet</p>
+
+  <div class="summary">
+    <div class="summary-card"><div>👥</div><div class="summary-num" id="totalCount">0</div><div class="summary-label">รายที่คัดกรองแล้ว</div></div>
+    <div class="summary-card"><div>⚠️</div><div class="summary-num" id="riskCount" style="color:var(--danger)">0</div><div class="summary-label">เข้าเกณฑ์เสี่ยง</div></div>
+    <div class="summary-card"><div>📋</div><div class="summary-num" id="riskPct">0%</div><div class="summary-label">สัดส่วนกลุ่มเสี่ยง</div></div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div style="flex:1">
+        <label>รหัสผู้เข้ารับการคัดกรอง</label>
+        <input id="codeInput" placeholder="เช่น อสม-001" />
+      </div>
+      <div style="width:100px">
+        <label>อายุ</label>
+        <input id="ageInput" placeholder="ปี" inputmode="numeric" />
+        <div id="ageHint" style="font-size:10.5px;color:var(--muted2);margin-top:3px;">ขั้นต่ำ 50 ปี</div>
+      </div>
+      <div style="width:130px">
+        <label>เพศ</label>
+        <select id="sexInput">
+          <option value="">เลือก</option>
+          <option value="male">ชาย</option>
+          <option value="female">หญิง</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <div style="margin-bottom:8px">
+      <label>📏 เส้นรอบวงน่อง (ซม.) — ไม่บังคับ</label>
+      <input id="calfInput" placeholder="เช่น 31.5" style="width:160px" />
+      <span class="calf-hint" id="calfHint"></span>
+    </div>
+
+    <div id="riskSection">
+      <div class="gauge-labels">
+        <span id="gaugeLabel">คะแนน SARC-F</span>
+        <span id="gaugeScoreText" style="font-weight:700;color:var(--text)">0 / 10</span>
+      </div>
+      <div class="gauge-track">
+        <div class="gauge-zone-safe" id="gaugeSafeZone"></div>
+        <div class="gauge-zone-danger" id="gaugeDangerZone"></div>
+        <div class="gauge-dot" id="gaugeDot"></div>
+      </div>
+      <div class="gauge-ticks">
+        <span>0</span>
+        <span id="gaugeMidTick"></span>
+        <span id="gaugeMaxTick">10</span>
+      </div>
+    </div>
+
+    <div id="riskBanner"></div>
+
+    <div id="extraFields">
+      <div style="font-weight:700;color:var(--danger-text);font-size:13.5px;margin-bottom:12px;">
+        ⚠️ เข้าเกณฑ์เสี่ยง — กรุณากรอกผลการทดสอบเพิ่มเติมก่อนบันทึก
+      </div>
+      <div class="row">
+        <div style="flex:1">
+          <label>ความแข็งแรงกล้ามเนื้อ Hand grip (กิโลกรัม)</label>
+          <input id="handGripInput" placeholder="เช่น 22.5" />
+        </div>
+        <div style="flex:1">
+          <label>BIA muscle mass (กิโลกรัม/ตารางเมตร)</label>
+          <input id="biaInput" placeholder="เช่น 6.8" />
+        </div>
+      </div>
+    </div>
+
+    <div id="errorMsg"></div>
+    <div id="configWarning">
+      ⚠️ ยังไม่ได้ตั้งค่า Google Sheet — โปรดใส่ Web App URL ที่ตัวแปร <code>GAS_URL</code> ในไฟล์นี้ก่อนใช้งานจริง
+      (ระบบจะยังบันทึกไว้ในหน้านี้ชั่วคราว แต่จะไม่ถูกส่งไปยัง Google Sheet)
+    </div>
+
+    <button class="save" id="saveBtn">บันทึกผลการคัดกรอง</button>
+  </div>
+
+  <div style="margin-top:32px">
+    <h2 class="records-title">รายการที่บันทึกไว้ (<span id="recordsCountTitle">0</span>)</h2>
+    <div id="recordsList"><div class="empty">ยังไม่มีข้อมูล เริ่มกรอกแบบฟอร์มด้านบนได้เลย</div></div>
+  </div>
+
+  <div class="footnote">
+    หมายเหตุ: ต้นแบบนี้ใช้เกณฑ์ SARC-CalF มาตรฐาน (คะแนนรวม ≥ 11 = เสี่ยง เมื่อมีค่ารอบวงน่อง) หรือ SARC-F เพียงอย่างเดียว
+    (คะแนนรวม ≥ 4 = เสี่ยง เมื่อไม่มีค่ารอบวงน่อง) เมื่อเข้าเกณฑ์เสี่ยง ระบบจะขอผล Hand grip strength และ BIA muscle mass
+    เพิ่มเติมตามแนวทาง AWGS ก่อนบันทึก ข้อมูลทั้งหมดจะถูกส่งไปยัง Google Sheet ที่ตั้งค่าไว้
+    ควรตรวจสอบความถูกต้องกับเกณฑ์วินิจฉัยจริงก่อนนำไปใช้ทางคลินิก
+  </div>
+</div>
+
+<script>
+/* ====================== CONFIG ======================
+   1. Deploy the Google Apps Script (see accompanying .gs code) as a Web App.
+   2. Paste the Web App URL below.
+====================================================== */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwJwZFy6JMEYLFpXW52yDkn_4xkiNu95xT0Cm-faloGIDF1TTKleJxr_KHet6-zobd7/exec";
+
+const QUESTIONS = [
+  { id:"strength", no:"01", label:"การยกและถือของหนักประมาณ 4.5 กก.", hint:"เช่น ถุงข้าวสาร ถังน้ำ",
+    options:["ไม่มีปัญหา","มีปัญหาบ้าง","ทำไม่ได้เลย / ต้องมีคนช่วย"] },
+  { id:"walking", no:"02", label:"การเดินข้ามห้อง", hint:"ระยะทางประมาณ 4-5 เมตร",
+    options:["ไม่มีปัญหา","มีปัญหาบ้าง","ต้องใช้อุปกรณ์ช่วยเดิน หรือทำไม่ได้เลย"] },
+  { id:"rising", no:"03", label:"การลุกขึ้นจากเก้าอี้หรือเตียง", hint:"",
+    options:["ไม่มีปัญหา","มีปัญหาบ้าง","ต้องใช้มือช่วยพยุง หรือทำไม่ได้เอง"] },
+  { id:"stairs", no:"04", label:"การเดินขึ้นบันได 10 ขั้น", hint:"",
+    options:["ไม่มีปัญหา","มีปัญหาบ้าง","ทำไม่ได้เลย หรือต้องมีคนช่วย"] },
+  { id:"falls", no:"05", label:"การหกล้มในช่วง 1 ปีที่ผ่านมา", hint:"",
+    options:["ไม่เคยล้ม","ล้ม 1-3 ครั้ง","ล้มตั้งแต่ 4 ครั้งขึ้นไป"] },
+];
+
+let state = {
+  answers:{},
+  records:[],
+  saving:false,
+};
+
+function computeScore(){
+  const sarcF = QUESTIONS.reduce((sum,q)=> sum + (state.answers[q.id] ?? 0), 0);
+  const calfRaw = document.getElementById("calfInput").value;
+  const sex = document.getElementById("sexInput").value;
+  const calfNum = parseFloat(calfRaw);
+  const hasCalf = calfRaw !== "" && !isNaN(calfNum);
+  let calfAdd = 0, cutoff = null;
+  if (hasCalf && sex){
+    cutoff = sex === "male" ? 34 : 33;
+    if (calfNum < cutoff) calfAdd = 10;
+  }
+  const total = hasCalf ? (sarcF + calfAdd) : sarcF;
+  const risk = hasCalf ? total >= 11 : sarcF >= 4;
+  return { sarcF, calfAdd, total, risk, hasCalf, cutoff };
+}
+
+function renderQuestions(){
+  const container = document.getElementById("questionsContainer");
+  container.innerHTML = QUESTIONS.map(q => `
+    <div class="q-block">
+      <div class="q-head">
+        <span class="q-no">${q.no}</span>
+        <div>
+          <div class="q-label">${q.label}</div>
+          ${q.hint ? `<div class="q-hint">${q.hint}</div>` : ""}
+        </div>
+      </div>
+      <div class="q-options">
+        ${q.options.map((opt,i)=>`
+          <button type="button" class="q-opt" data-qid="${q.id}" data-val="${i}">
+            ${opt} <span class="pts">(${i} คะแนน)</span>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+
+  container.querySelectorAll(".q-opt").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const qid = btn.getAttribute("data-qid");
+      const val = parseInt(btn.getAttribute("data-val"),10);
+      state.answers[qid] = val;
+      container.querySelectorAll(`.q-opt[data-qid="${qid}"]`).forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      recalc();
+    });
+  });
+}
+
+function allAnswered(){
+  return QUESTIONS.every(q => state.answers[q.id] !== undefined);
+}
+
+function recalc(){
+  const sex = document.getElementById("sexInput").value;
+  const calfHint = document.getElementById("calfHint");
+  calfHint.textContent = sex ? `เกณฑ์เสี่ยง: น้อยกว่า ${sex === "male" ? 34 : 33} ซม.` : "";
+
+  const riskSection = document.getElementById("riskSection");
+  const riskBanner = document.getElementById("riskBanner");
+  const extraFields = document.getElementById("extraFields");
+  const saveBtn = document.getElementById("saveBtn");
+
+  if (!allAnswered()){
+    riskSection.style.display = "none";
+    riskBanner.style.display = "none";
+    extraFields.style.display = "none";
+    saveBtn.classList.remove("enabled");
+    return;
+  }
+
+  const info = computeScore();
+  const max = info.hasCalf ? 20 : 10;
+  const threshold = info.hasCalf ? 11 : 4;
+  const pct = Math.min(100, (info.total / max) * 100);
+  const zoneWidth = (threshold / max) * 100;
+
+  riskSection.style.display = "block";
+  document.getElementById("gaugeLabel").textContent = `คะแนน ${info.hasCalf ? "SARC-CalF" : "SARC-F"}`;
+  document.getElementById("gaugeScoreText").textContent = `${info.total} / ${max}`;
+  document.getElementById("gaugeSafeZone").style.width = zoneWidth + "%";
+  document.getElementById("gaugeDangerZone").style.width = (100 - zoneWidth) + "%";
+  document.getElementById("gaugeDot").style.left = `calc(${pct}% - 10px)`;
+  document.getElementById("gaugeMaxTick").textContent = max;
+  document.getElementById("gaugeMidTick").textContent = threshold;
+  document.getElementById("gaugeMidTick").style.marginLeft = `${zoneWidth - 8}%`;
+
+  riskBanner.style.display = "flex";
+  if (info.risk){
+    riskBanner.style.background = "var(--danger-bg)";
+    riskBanner.style.color = "var(--danger-text)";
+    riskBanner.innerHTML = "⚠️ เข้าเกณฑ์เสี่ยงภาวะ Sarcopenia — ควรส่งต่อเพื่อประเมินเพิ่มเติม";
+    extraFields.style.display = "block";
+  } else {
+    riskBanner.style.background = "var(--safe-bg)";
+    riskBanner.style.color = "var(--safe-text)";
+    riskBanner.innerHTML = "✅ ไม่เข้าเกณฑ์เสี่ยงในขณะนี้";
+    extraFields.style.display = "none";
+  }
+
+  const canSave = info.risk
+    ? (document.getElementById("handGripInput").value.trim() !== "" && document.getElementById("biaInput").value.trim() !== "")
+    : true;
+  saveBtn.classList.toggle("enabled", canSave && !state.saving);
+}
+
+function renderRecords(){
+  const list = document.getElementById("recordsList");
+  document.getElementById("totalCount").textContent = state.records.length;
+  const riskCount = state.records.filter(r=>r.risk).length;
+  document.getElementById("riskCount").textContent = riskCount;
+  document.getElementById("riskPct").textContent = state.records.length ? Math.round((riskCount/state.records.length)*100) + "%" : "0%";
+  document.getElementById("recordsCountTitle").textContent = state.records.length;
+
+  if (state.records.length === 0){
+    list.innerHTML = `<div class="empty">ยังไม่มีข้อมูล เริ่มกรอกแบบฟอร์มด้านบนได้เลย</div>`;
+    return;
+  }
+  list.innerHTML = state.records.map(r => `
+    <div class="record-row">
+      <div>
+        <div class="record-code">${r.code}</div>
+        <div class="record-meta">อายุ ${r.age} · ${r.sex === "male" ? "ชาย" : r.sex === "female" ? "หญิง" : "-"} · ${new Date(r.date).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"2-digit"})}</div>
+      </div>
+      <span class="badge ${r.risk ? "risk" : "safe"}">${r.hasCalf ? "SARC-CalF" : "SARC-F"} ${r.total}</span>
+    </div>
+  `).join("");
+}
+
+function resetForm(){
+  state.answers = {};
+  document.getElementById("codeInput").value = "";
+  document.getElementById("ageInput").value = "";
+  document.getElementById("ageHint").textContent = "ขั้นต่ำ 50 ปี";
+  document.getElementById("ageHint").style.color = "var(--muted2)";
+  document.getElementById("sexInput").value = "";
+  document.getElementById("calfInput").value = "";
+  document.getElementById("handGripInput").value = "";
+  document.getElementById("biaInput").value = "";
+  document.querySelectorAll(".q-opt").forEach(b=>b.classList.remove("active"));
+  document.getElementById("errorMsg").style.display = "none";
+  recalc();
+}
+
+async function handleSave(){
+  if (!document.getElementById("saveBtn").classList.contains("enabled")) return;
+  const info = computeScore();
+  const errorMsg = document.getElementById("errorMsg");
+  errorMsg.style.display = "none";
+
+  state.saving = true;
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.textContent = "กำลังบันทึก…";
+  saveBtn.classList.remove("enabled");
+
+  const entry = {
+    date: new Date().toISOString(),
+    code: document.getElementById("codeInput").value.trim() || "ไม่ระบุ",
+    age: document.getElementById("ageInput").value || "-",
+    sex: document.getElementById("sexInput").value,
+    answers: {...state.answers},
+    calf: document.getElementById("calfInput").value || null,
+    handGrip: info.risk ? (document.getElementById("handGripInput").value || null) : null,
+    bia: info.risk ? (document.getElementById("biaInput").value || null) : null,
+    ...info,
+  };
+
+  try {
+    if (GAS_URL && GAS_URL !== "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"){
+      document.getElementById("configWarning").style.display = "none";
+      await fetch(GAS_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(entry),
+      });
+    } else {
+      document.getElementById("configWarning").style.display = "block";
+    }
+    state.records.unshift(entry);
+    renderRecords();
+    resetForm();
+  } catch (e){
+    errorMsg.textContent = "บันทึกข้อมูลไม่สำเร็จ ลองใหม่อีกครั้ง";
+    errorMsg.style.display = "block";
+  } finally {
+    state.saving = false;
+    saveBtn.textContent = "บันทึกผลการคัดกรอง";
+    recalc();
+  }
+}
+
+const MIN_AGE = 50;
+
+function setupAgeInput(){
+  const ageInput = document.getElementById("ageInput");
+  const ageHint = document.getElementById("ageHint");
+
+  ageInput.addEventListener("input", ()=>{
+    // digits only
+    ageInput.value = ageInput.value.replace(/[^0-9]/g, "");
+    ageHint.textContent = `ขั้นต่ำ ${MIN_AGE} ปี`;
+    ageHint.style.color = "var(--muted2)";
+    recalc();
+  });
+
+  ageInput.addEventListener("blur", ()=>{
+    if (ageInput.value === "") return;
+    const val = parseInt(ageInput.value, 10);
+    if (!isNaN(val) && val < MIN_AGE){
+      ageInput.value = String(MIN_AGE);
+      ageHint.textContent = `กรอกได้ตั้งแต่ ${MIN_AGE} ปีขึ้นไป — ปรับเป็น ${MIN_AGE} ปีให้แล้ว`;
+      ageHint.style.color = "var(--danger)";
+      recalc();
+    }
+  });
+}
+
+// init
+renderQuestions();
+renderRecords();
+setupAgeInput();
+["calfInput","sexInput","handGripInput","biaInput"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", recalc);
+  document.getElementById(id).addEventListener("change", recalc);
+});
+document.getElementById("saveBtn").addEventListener("click", handleSave);
+recalc();
+</script>
+</body>
+</html>
